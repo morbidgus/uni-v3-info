@@ -14,11 +14,12 @@ const DEFAULT_HEIGHT = 300
 
 const Wrapper = styled(Card)`
   width: 100%;
-  height: ${DEFAULT_HEIGHT}px;
+  height: 380px;
   padding: 1rem;
   padding-right: 2rem;
   display: flex;
-  background-color: ${({ theme }) => theme.bg0};
+  background-color: #2e2b42;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   flex-direction: column;
   > * {
     font-size: 1rem;
@@ -56,7 +57,13 @@ const CustomBar = ({
 }) => {
   return (
     <g>
-      <rect x={x} y={y} fill={fill} width={width} height={height} rx="2" />
+      <defs>
+        <linearGradient id="bar-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#626ABB" />
+          <stop offset="100%" stopColor="rgba(139, 89, 203, 0)" />
+        </linearGradient>
+      </defs>
+      <rect x={x} y={y} fill="url(#bar-gradient)" width={width} height={height} rx="2" />
     </g>
   )
 }
@@ -148,7 +155,6 @@ const Chart = ({
             />
             <Bar
               dataKey="value"
-              fill={color}
               shape={(props) => {
                 return <CustomBar height={props.height} width={props.width} x={props.x} y={props.y} fill={color} />
               }}

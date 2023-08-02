@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { darken } from 'polished'
 import styled from 'styled-components'
 import LogoDark from '../../assets/svg/logo_white.svg'
+import ChronosLogo from '../../assets/svg/chronos-logo.svg'
 import Menu from '../Menu'
 import Row, { RowFixed, RowBetween } from '../Row'
 import SearchSmall from 'components/Search'
@@ -12,21 +13,16 @@ import { networkPrefix } from 'utils/networkPrefix'
 import { AutoColumn } from 'components/Column'
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
+  display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   flex-direction: row;
   width: 100%;
   top: 0;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1rem;
   z-index: 2;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-
-  background-color: ${({ theme }) => theme.bg0};
 
   @media (max-width: 1080px) {
     grid-template-columns: 1fr;
@@ -52,13 +48,20 @@ const HeaderControls = styled.div`
 `
 
 const HeaderRow = styled(RowFixed)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  width: 100%;
   @media (max-width: 1080px) {
     width: 100%;
   }
 `
 
-const HeaderLinks = styled(Row)`
+const HeaderOptions = styled.div`
+  display: flex;
   justify-content: center;
+  margin-left: 1rem;
   @media (max-width: 1080px) {
     padding: 0.5rem;
     justify-content: flex-end;
@@ -69,8 +72,9 @@ const Title = styled(NavLink)`
   display: flex;
   align-items: center;
   pointer-events: auto;
-  justify-self: flex-start;
-  margin-right: 12px;
+  justify-self: flex-end
+  margin-right: 2rem;
+  margin-left: 2rem;
   :hover {
     cursor: pointer;
   }
@@ -79,12 +83,7 @@ const Title = styled(NavLink)`
   `};
 `
 
-const UniIcon = styled.div`
-  transition: transform 0.3s ease;
-  :hover {
-    transform: rotate(-5deg);
-  }
-`
+const UniIcon = styled.div``
 
 const activeClassName = 'ACTIVE'
 
@@ -93,20 +92,20 @@ const StyledNavLink = styled(NavLink).attrs({
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
-  border-radius: 3rem;
+  border-radius: 20px;
   outline: none;
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text3};
-  font-size: 1rem;
+  font-size: 14px;
   width: fit-content;
   margin: 0 6px;
   padding: 8px 12px;
   font-weight: 500;
 
   &.${activeClassName} {
-    border-radius: 12px;
-    background-color: ${({ theme }) => theme.bg2};
+    border-radius: 20px;
+    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
     color: ${({ theme }) => theme.text1};
   }
 
@@ -162,10 +161,11 @@ export default function Header() {
       <HeaderRow>
         <Title to={networkPrefix(activeNewtork)}>
           <UniIcon>
-            <img width={'24px'} src={LogoDark} alt="logo" />
+            <img width={'240px'} height={'50px'} src={ChronosLogo} alt="logo" />
           </UniIcon>
         </Title>
-        <HeaderLinks>
+        <SearchSmall />
+        <HeaderOptions>
           <StyledNavLink
             id={`pool-nav-link`}
             to={networkPrefix(activeNewtork)}
@@ -179,14 +179,9 @@ export default function Header() {
           <StyledNavLink id={`stake-nav-link`} to={networkPrefix(activeNewtork) + 'tokens'}>
             Tokens
           </StyledNavLink>
-        </HeaderLinks>
+        </HeaderOptions>
       </HeaderRow>
-      <HeaderControls>
-        <NetworkDropdown />
-        <SearchSmall />
-        <Menu />
-      </HeaderControls>
-      <SmallContentGrouping>
+      {/* <SmallContentGrouping>
         <AutoColumn gap="sm">
           <RowBetween>
             <NetworkDropdown />
@@ -194,7 +189,7 @@ export default function Header() {
           </RowBetween>
           <SearchSmall />
         </AutoColumn>
-      </SmallContentGrouping>
+      </SmallContentGrouping> */}
     </HeaderFrame>
   )
 }

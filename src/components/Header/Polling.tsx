@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { TYPE, ExternalLink } from '../../theme'
+import SquareIcon from '../../assets/svg/square.svg'
 
 import { useActiveNetworkVersion, useSubgraphStatus } from '../../state/application/hooks'
 import { getEtherscanLink } from '../../utils'
@@ -9,14 +10,16 @@ import { EthereumNetworkInfo } from 'constants/networks'
 
 const StyledPolling = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
   margin-right: 1rem;
-  border-radius: 4px;
-  width: 192px;
+  border-radius: 20px;
+  width: 220px;
   padding: 4px;
-  background-color: ${({ theme }) => theme.bg2};
   transition: opacity 0.25s ease;
   color: ${({ theme }) => theme.green1};
+  border: 1px solid rgba(255, 255, 255, 0.15);
   :hover {
     opacity: 1;
   }
@@ -31,6 +34,7 @@ const StyledPollingDot = styled.div`
   height: 8px;
   min-height: 8px;
   min-width: 8px;
+  margin-right: 0.4rem;
   margin-left: 0.4rem;
   margin-top: 3px;
   border-radius: 50%;
@@ -87,11 +91,12 @@ export default function Polling() {
   return (
     <ExternalLink href={latestBlock ? getEtherscanLink(1, latestBlock.toString(), 'block', activeNetwork) : ''}>
       <StyledPolling>
-        <TYPE.small mr="4px" color={theme.text3}>
-          Latest synced block:{' '}
+        <img height="20px" width="20px" src={SquareIcon} alt="block" />
+        <TYPE.small mx="4px" color="white">
+          Last synced block:{' '}
         </TYPE.small>
-        <TYPE.small style={{ opacity: isMounted ? '0.6' : '0.8' }}>{latestBlock}</TYPE.small>
         <StyledPollingDot>{!isMounted && <Spinner />}</StyledPollingDot>
+        <TYPE.small style={{ opacity: isMounted ? '0.6' : '0.8' }}>{latestBlock}</TYPE.small>
       </StyledPolling>
     </ExternalLink>
   )

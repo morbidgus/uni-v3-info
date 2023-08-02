@@ -7,11 +7,12 @@ import { formatDollarAmount } from 'utils/numbers'
 import Polling from './Polling'
 import { useActiveNetworkVersion } from '../../state/application/hooks'
 import { SupportedNetwork } from '../../constants/networks'
+import EthereumIcon from '../../assets/svg/ethereum.svg'
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${({ theme }) => theme.black};
-  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 10px 3rem;
 `
 
 const Item = styled(TYPE.main)`
@@ -23,35 +24,47 @@ const StyledLink = styled(ExternalLink)`
   color: ${({ theme }) => theme.text1};
 `
 
+const ETHItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+const RowContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+`
+
+const TopBarElement = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 const TopBar = () => {
   const ethPrices = useEthPrices()
   const [activeNetwork] = useActiveNetworkVersion()
   return (
     <Wrapper>
-      <RowBetween>
+      <RowContainer>
         <Polling />
-        <AutoRow gap="6px">
-          <RowFixed>
-            {activeNetwork.id === SupportedNetwork.CELO ? (
-              <Item>Celo Price:</Item>
-            ) : activeNetwork.id === SupportedNetwork.BNB ? (
-              <Item>BNB Price:</Item>
-            ) : activeNetwork.id === SupportedNetwork.AVALANCHE ? (
-              <Item>AVAX Price:</Item>
-            ) : (
-              <Item>Eth Price:</Item>
-            )}
-            <Item fontWeight="700" ml="4px">
-              {formatDollarAmount(ethPrices?.current)}
-            </Item>
-          </RowFixed>
-        </AutoRow>
-        <AutoRow gap="6px" style={{ justifyContent: 'flex-end' }}>
-          <StyledLink href="https://v2.info.uniswap.org/#/">V2 Analytics</StyledLink>
-          <StyledLink href="https://docs.uniswap.org/">Docs</StyledLink>
-          <StyledLink href="https://app.uniswap.org/#/swap">App</StyledLink>
-        </AutoRow>
-      </RowBetween>
+        <TopBarElement>
+          {activeNetwork.id === SupportedNetwork.CELO ? (
+            <Item>Celo Price:</Item>
+          ) : activeNetwork.id === SupportedNetwork.BNB ? (
+            <Item>BNB Price:</Item>
+          ) : activeNetwork.id === SupportedNetwork.AVALANCHE ? (
+            <Item>AVAX Price:</Item>
+          ) : (
+            <ETHItem>
+              <img height="20px" width="12px" src={EthereumIcon} alt="Eth price" />
+            </ETHItem>
+          )}
+          <Item fontWeight="700" ml="4px">
+            {formatDollarAmount(ethPrices?.current)}
+          </Item>
+        </TopBarElement>
+      </RowContainer>
     </Wrapper>
   )
 }

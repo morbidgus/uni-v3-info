@@ -6,6 +6,7 @@ import { RowBetween } from 'components/Row'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import useTheme from 'hooks/useTheme'
+import { VolumeWindow } from 'types'
 import { darken } from 'polished'
 import { LoadingRows } from 'components/Loader'
 dayjs.extend(utc)
@@ -14,11 +15,12 @@ const DEFAULT_HEIGHT = 300
 
 const Wrapper = styled(Card)`
   width: 100%;
-  height: ${DEFAULT_HEIGHT}px;
+  height: 380px;
   padding: 1rem;
   padding-right: 2rem;
   display: flex;
-  background-color: ${({ theme }) => theme.bg0};
+  background-color: #2e2b42;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   flex-direction: column;
   > * {
     font-size: 1rem;
@@ -34,6 +36,7 @@ export type LineChartProps = {
   setLabel?: Dispatch<SetStateAction<string | undefined>> // used for label of valye
   value?: number
   label?: string
+  activeWindow?: VolumeWindow
   topLeft?: ReactNode | undefined
   topRight?: ReactNode | undefined
   bottomLeft?: ReactNode | undefined
@@ -42,9 +45,10 @@ export type LineChartProps = {
 
 const Chart = ({
   data,
-  color = '#56B2A4',
+  color = '#626ABB',
   value,
   label,
+  activeWindow,
   setValue,
   setLabel,
   topLeft,
@@ -56,6 +60,8 @@ const Chart = ({
 }: LineChartProps) => {
   const theme = useTheme()
   const parsedValue = value
+
+  const now = dayjs()
 
   return (
     <Wrapper minHeight={minHeight} {...rest}>
@@ -88,15 +94,15 @@ const Chart = ({
           >
             <defs>
               <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={darken(0.36, color)} stopOpacity={0.5} />
-                <stop offset="100%" stopColor={color} stopOpacity={0} />
+                <stop offset="0%" stopColor="#626ABB" />
+                <stop offset="100%" stopColor="rgba(139, 89, 203, 0)" />
               </linearGradient>
             </defs>
             <XAxis
               dataKey="time"
               axisLine={false}
               tickLine={false}
-              tickFormatter={(time) => dayjs(time).format('DD')}
+              tickFormatter={(time) => dayjs(time).format(activeWindow === VolumeWindow.monthly ? 'MMM' : 'DD')}
               minTickGap={10}
             />
             <Tooltip
@@ -106,11 +112,29 @@ const Chart = ({
                 if (setValue && parsedValue !== props.payload.value) {
                   setValue(props.payload.value)
                 }
-                const formattedTime = dayjs(props.payload.time).format('MMM D, YYYY')
-                if (setLabel && label !== formattedTime) setLabel(formattedTime)
+                const formattedTime = dayjs(props.payload.time).format('MMM D')
+                const formattedTimeDaily = dayjs(props.payload.time).format('MMM D YYYY')
+                const formattedTimePlusWeek = dayjs(props.payload.time).add(1, 'week')
+                const formattedTimePlusMonth = dayjs(props.payload.time).add(1, 'month')
+
+                if (setLabel && label !== formattedTime) {
+                  if (activeWindow === VolumeWindow.weekly) {
+                    const isCurrent = formattedTimePlusWeek.isAfter(now)
+                    setLabel(
+                      formattedTime + '-' + (isCurrent ? 'current' : formattedTimePlusWeek.format('MMM D, YYYY'))
+                    )
+                  } else if (activeWindow === VolumeWindow.monthly) {
+                    const isCurrent = formattedTimePlusMonth.isAfter(now)
+                    setLabel(
+                      formattedTime + '-' + (isCurrent ? 'current' : formattedTimePlusMonth.format('MMM D, YYYY'))
+                    )
+                  } else {
+                    setLabel(formattedTimeDaily)
+                  }
+                }
               }}
             />
-            <Area dataKey="value" type="monotone" stroke={color} fill="url(#gradient)" strokeWidth={2} />
+            <Area dataKey="value" type="monotone" stroke={color} fill="url(#gradient)" strokeWidth={1} />
           </AreaChart>
         </ResponsiveContainer>
       )}

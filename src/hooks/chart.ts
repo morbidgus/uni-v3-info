@@ -46,3 +46,30 @@ export function useTransformedVolumeData(
     }
   }, [chartData, type])
 }
+
+export function useTransformedTVLData(
+  chartData: ChartDayData[] | PoolChartEntry[] | TokenChartEntry[] | undefined,
+  type: 'month' | 'week'
+) {
+  return useMemo(() => {
+    if (chartData) {
+      const data: Record<string, GenericChartEntry> = {}
+
+      chartData.forEach(({ date, tvlUSD }: any) => {
+        const group = unixToType(date, type)
+        if (data[group]) {
+          data[group].value += tvlUSD
+        } else {
+          data[group] = {
+            time: unixToDate(date),
+            value: tvlUSD,
+          }
+        }
+      })
+
+      return Object.values(data)
+    } else {
+      return []
+    }
+  }, [chartData, type])
+}

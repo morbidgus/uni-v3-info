@@ -1,4 +1,4 @@
-import { InterpolationWithTheme } from '@emotion/core'
+import { InterpolationWithTheme } from '@emotion/react'
 import {
   BoxProps as BoxP,
   ButtonProps as ButtonP,

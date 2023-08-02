@@ -19,6 +19,7 @@ import HoverInlineText from 'components/HoverInlineText'
 import { TOKEN_HIDE, POOL_HIDE } from '../../constants/index'
 import { useActiveNetworkVersion } from 'state/application/hooks'
 import { networkPrefix } from 'utils/networkPrefix'
+import SearchIcon from '../../assets/svg/search.svg'
 
 const Container = styled.div`
   position: relative;
@@ -27,13 +28,14 @@ const Container = styled.div`
 `
 
 const Wrapper = styled(Row)`
-  background-color: ${({ theme }) => theme.black};
+  background-color: #393450;
   padding: 10px 16px;
-  width: 500px;
-  height: 38px;
+  height: 48px;
   border-radius: 20px;
   position: relative;
   z-index: 9999;
+  align-items: center;
+  max-width: 786px;
 
   @media (max-width: 1080px) {
     width: 100%;
@@ -48,13 +50,13 @@ const StyledInput = styled.input`
   background: none;
   border: none;
   width: 100%;
-  font-size: 16px;
+  font-size: 14px;
   outline: none;
   color: ${({ theme }) => theme.text1};
 
   ::placeholder {
     color: ${({ theme }) => theme.text3};
-    font-size: 16px;
+    font-size: 14px;
   }
 
   @media screen and (max-width: 640px) {
@@ -62,6 +64,13 @@ const StyledInput = styled.input`
       font-size: 1rem;
     }
   }
+`
+
+const SearchIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
 `
 
 const Menu = styled.div<{ hide: boolean }>`
@@ -76,7 +85,7 @@ const Menu = styled.div<{ hide: boolean }>`
   padding: 1.5rem;
   padding-bottom: 1.5rem;
   position: absolute;
-  background: ${({ theme }) => theme.bg0};
+  background: #2e2b42;
   border-radius: 8px;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.04);
@@ -230,13 +239,16 @@ const Search = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
       {showMenu ? <Blackout /> : null}
       <Container>
         <Wrapper {...rest}>
+          <SearchIconWrapper>
+            <img width={'20px'} height={'20px'} src={SearchIcon} alt="logo" />
+          </SearchIconWrapper>
           <StyledInput
             type="text"
             value={value}
             onChange={(e) => {
               setValue(e.target.value)
             }}
-            placeholder="Search pools or tokens"
+            placeholder="Search by Pair or token..."
             ref={ref}
             onFocus={() => {
               setFocused(true)

@@ -285,7 +285,7 @@ export default function PoolPage({
                     </MonoSpace>
                   </TYPE.label>
                   <TYPE.main height="20px" fontSize="12px">
-                    {valueLabel ? <MonoSpace>{valueLabel} (UTC)</MonoSpace> : ''}
+                    {valueLabel ? <MonoSpace>{valueLabel}</MonoSpace> : ''}
                   </TYPE.main>
                 </AutoColumn>
                 <ToggleWrapper width="240px">

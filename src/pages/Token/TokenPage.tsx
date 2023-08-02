@@ -293,7 +293,7 @@ export default function TokenPage({
                     </RowFixed>
                     <TYPE.main height="20px" fontSize="12px">
                       {valueLabel ? (
-                        <MonoSpace>{valueLabel} (UTC)</MonoSpace>
+                        <MonoSpace>{valueLabel}</MonoSpace>
                       ) : (
                         <MonoSpace>{dayjs.utc().format('MMM D, YYYY')}</MonoSpace>
                       )}

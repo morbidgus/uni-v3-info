@@ -24,6 +24,21 @@ const AppWrapper = styled.div`
   align-items: center;
   overflow-x: hidden;
   min-height: 100vh;
+  width: 100vw;
+
+  /* Combine the background image and gradient as layers */
+  background-image: url('https://i.ibb.co/44rv4vZ/Background.png'), linear-gradient(
+    to bottom,
+    rgba(24, 21, 34, 1) 0%,
+    rgba(19, 17, 28, 1) 100% /* Set alpha to 0 at the bottom */
+  );
+  background-position: 0 0, 0 0;
+  background-repeat: no-repeat, no-repeat;
+  background-size: auto, 100%;
+  background-attachment: scroll, fixed;
+  background-origin: border-box, padding-box;
+  background-clip: border-box, border-box;
+}
 `
 
 const HeaderWrapper = styled.div`
@@ -38,21 +53,20 @@ const BodyWrapper = styled.div<{ warningActive?: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 40px;
-  margin-top: ${({ warningActive }) => (warningActive ? '140px' : '100px')};
+  padding-top: 140px;
   align-items: center;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 1;
+  background: radial-gradient(80.62% 80.62% at 50% 19.38%, #2d283e 0.01%, rgba(26, 23, 40, 0.1) 100%);
 
   > * {
     max-width: 1200px;
   }
 
   @media (max-width: 1080px) {
-    padding-top: 2rem;
-    margin-top: 140px;
+    padding-top: 100px;
   }
 `
 

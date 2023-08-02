@@ -158,7 +158,7 @@ const CandleChart = ({
           setLabel && setLabel(undefined)
         } else if (series && param) {
           const timestamp = param.time as number
-          const time = dayjs.unix(timestamp).utc().format('MMM D, YYYY h:mm A') + ' (UTC)'
+          const time = dayjs.unix(timestamp).utc().format('MMM D, YYYY h:mm A')
           const parsed = param.seriesPrices.get(series) as { open: number } | undefined
           setValue && setValue(parsed?.open)
           setLabel && setLabel(time)

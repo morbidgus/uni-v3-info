@@ -418,8 +418,8 @@ export const SmallOptionButton = styled(Base)<{ active?: boolean }>`
   font-size: 12px;
   border-radius: 4px;
   min-width: 36px;
-  background-color: ${({ active, theme }) => (active ? theme.bg2 : theme.bg1)};
-  color: ${({ active, theme }) => (active ? theme.text1 : theme.text2)};
+  background-color: transparent;
+  color: ${({ active, theme }) => (active ? 'pink' : 'white')};
 
   :hover {
     opacity: 0.6;
