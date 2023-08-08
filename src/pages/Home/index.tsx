@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
 import { TYPE } from 'theme'
-import { ResponsiveRow, RowBetween, RowFixed } from 'components/Row'
+import { ResponsiveRow, RowBetween, RowFixed, TableRowBetween } from 'components/Row'
 import LineChart from 'components/LineChart/alt'
 import useTheme from 'hooks/useTheme'
 import { useProtocolChartData, useProtocolData, useProtocolTransactions } from 'state/protocol/hooks'
@@ -30,6 +30,8 @@ import InsightsIcon from '../../assets/svg/insights.svg'
 import LockIcon from '../../assets/svg/lock.svg'
 import ArrowUpIcon from '../../assets/svg/arrow-up.svg'
 import ArrowDownIcon from '../../assets/svg/arrow-down.svg'
+import { Link } from 'react-router-dom'
+import ArrowRightIcon from '../../assets/svg/arrow-right.svg'
 
 interface DailyInfoElementProps {
   title: string
@@ -75,7 +77,7 @@ const InfoContainer = styled.div`
 const InfoSeparator = styled.div`
   height: 85%;
   width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   position: absolute;
 `
 const TimeVolumeContainer = styled.div`
@@ -133,15 +135,21 @@ const InfoTitle = styled.span`
 
 const InfoValueContainer = styled.div`
   display: flex;
+  align-items: center;
 `
 
 const InfoValue = styled.span`
-  font-size: 25px
+  font-size: 25px;
   margin-right: 10px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  font-size: 16px;
+  `};
 `
 
 const InfoValueChange = styled.div<{ isNegative?: boolean }>`
   display: flex;
+  align-items: center;
   border: 1px solid ${({ isNegative }) => (isNegative ? '#FF2A5F' : '#27F291')}
   border-radius: 20px;
   padding: 5px 10px;
@@ -149,16 +157,99 @@ const InfoValueChange = styled.div<{ isNegative?: boolean }>`
 
 const ChangeValue = styled.span<{ isNegative?: boolean }>`
   color: ${({ isNegative }) => (isNegative ? '#FF2A5F' : '#27F291')};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  font-size: 12px;
+  `};
 `
 
 const InfoRowContainer = styled.div`
   width: 100%;
   display: flex;
   gap: 30px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `};
+`
+
+const ExploreLink = styled(Link)<{ fontSize?: string }>`
+  cursor: pointer;
+  position: relative; /* Add position relative to the parent element */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background-color: #3b3855;
+  padding: 0.625rem 1.25rem;
+  gap: 0.625rem;
+  border-radius: 20px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(67.55deg, #2f3bae 4.5%, #9a81ff 95.77%);
+    opacity: 0;
+    border-radius: inherit;
+    transition: opacity 0.3s ease; /* Add transition property for opacity */
+  }
+
+  :hover::before {
+    opacity: 1; /* Change the opacity on hover to reveal the background gradient */
+  }
+
+  :focus {
+    outline: none;
+    text-decoration: none;
+  }
+
+  :active {
+    text-decoration: none;
+  }
+`
+
+const ExploreIconContainer = styled.div`
+  z-index: 2;
+  display: flex;
+  align-items: center;
+`
+
+const LinkContent = styled.span`
+  z-index: 2;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+`
+
+const PageSubHeader = styled.span`
+  font-size: 30px;
+  margin-top: 30px;
+
+  @media (max-width: 1080px) {
+    margin-top: 100px;
+    font-size: 24px;
+  }
+`
+const ChartTitle = styled.span`
+  font-size: 25px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+font-size: 14px;
+`};
+`
+
+const ChartSubTitle = styled.span`
+  font-size: 12px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+font-size: 10px;
+`};
 `
 
 const DailyInfoElement: React.FC<DailyInfoElementProps> = ({ title, icon, value, percentageChange }: any) => {
-  const truncated = parseFloat(percentageChange.toFixed(2))
+  const truncated = parseFloat(percentageChange?.toFixed(2))
 
   return (
     <ContentContainer>
@@ -282,9 +373,7 @@ export default function Home() {
     <PageWrapper>
       <ThemedBackgroundGlobal backgroundColor={activeNetwork.bgColor} />
       <AutoColumn gap="16px">
-        <TYPE.subHeader fontSize="30px" my="30px">
-          Analytics Overview
-        </TYPE.subHeader>
+        <PageSubHeader>Analytics Overview</PageSubHeader>
         <ResponsiveRow>
           <ChartWrapper>
             <LineChart
@@ -319,19 +408,17 @@ export default function Home() {
                 <InfoWrapper>
                   <InfoContainer>
                     <LeftAlignContainer>
-                      <TYPE.white fontSize="25px">TVL</TYPE.white>
-                      <TYPE.subHeader fontSize="12px">Total Value Locked</TYPE.subHeader>
+                      <ChartTitle>TVL</ChartTitle>
+                      <ChartSubTitle>Total Value Locked</ChartSubTitle>
                     </LeftAlignContainer>
                   </InfoContainer>
                   <InfoSeparator />
                   <InfoContainer>
                     <LeftAlignContainer>
-                      <TYPE.white fontSize="25px">{tvlValue}</TYPE.white>
+                      <ChartTitle>{tvlValue}</ChartTitle>
                       <TimeVolumeContainer>
                         <img width={'20px'} height={'20px'} src={CalendarIcon} alt="Calendar" />
-                        <TYPE.subHeader fontSize={'12px'}>
-                          {leftLabel ? <MonoSpace>{leftLabel}</MonoSpace> : 'All time'}
-                        </TYPE.subHeader>
+                        <ChartSubTitle>{leftLabel ? <MonoSpace>{leftLabel}</MonoSpace> : 'All time'}</ChartSubTitle>
                       </TimeVolumeContainer>
                     </LeftAlignContainer>
                   </InfoContainer>
@@ -376,19 +463,17 @@ export default function Home() {
                 <InfoWrapper>
                   <InfoContainer>
                     <LeftAlignContainer>
-                      <TYPE.white fontSize="25px">Volume</TYPE.white>
+                      <ChartTitle>Volume</ChartTitle>
                       <TYPE.subHeader fontSize="12px">24h Volume</TYPE.subHeader>
                     </LeftAlignContainer>
                   </InfoContainer>
                   <InfoSeparator />
                   <InfoContainer>
                     <LeftAlignContainer>
-                      <TYPE.white fontSize="25px">{formatDollarAmount(volumeHover, 2)}</TYPE.white>
+                      <ChartTitle>{formatDollarAmount(volumeHover, 2)}</ChartTitle>
                       <TimeVolumeContainer>
                         <img width={'20px'} height={'20px'} src={CalendarIcon} alt="Calendar" />
-                        <TYPE.subHeader fontSize={'12px'}>
-                          {rightLabel ? <MonoSpace>{rightLabel}</MonoSpace> : 'All time'}
-                        </TYPE.subHeader>
+                        <ChartSubTitle>{rightLabel ? <MonoSpace>{rightLabel}</MonoSpace> : 'All time'}</ChartSubTitle>
                       </TimeVolumeContainer>
                     </LeftAlignContainer>
                   </InfoContainer>
@@ -418,19 +503,29 @@ export default function Home() {
           />
         </InfoRowContainer>
 
-        <RowBetween>
+        <TableRowBetween>
           <TYPE.subHeader fontSize="30px">Tokens</TYPE.subHeader>
-          <StyledInternalLink to="tokens">Explore</StyledInternalLink>
-        </RowBetween>
+          <ExploreLink to="tokens">
+            <LinkContent>Explore</LinkContent>
+            <ExploreIconContainer>
+              <img height={20} width={20} alt="arrow" src={ArrowRightIcon} />
+            </ExploreIconContainer>
+          </ExploreLink>
+        </TableRowBetween>
         <TokenTable tokenDatas={formattedTokens} />
-        <RowBetween>
+        <TableRowBetween>
           <TYPE.subHeader fontSize="30px">Pools</TYPE.subHeader>
-          <StyledInternalLink to="pools">Explore</StyledInternalLink>
-        </RowBetween>
+          <ExploreLink to="pools">
+            <LinkContent>Explore</LinkContent>
+            <ExploreIconContainer>
+              <img height={20} width={20} alt="arrow" src={ArrowRightIcon} />
+            </ExploreIconContainer>
+          </ExploreLink>
+        </TableRowBetween>
         <PoolTable poolDatas={poolDatas} />
-        <RowBetween>
+        <TableRowBetween>
           <TYPE.subHeader fontSize="30px">Transactions</TYPE.subHeader>
-        </RowBetween>
+        </TableRowBetween>
         {transactions ? <TransactionsTable transactions={transactions} color={activeNetwork.primaryColor} /> : null}
       </AutoColumn>
     </PageWrapper>

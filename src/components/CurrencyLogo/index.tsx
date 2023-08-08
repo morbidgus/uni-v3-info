@@ -50,7 +50,7 @@ const StyledEthereumLogo = styled.img<{ size: string }>`
 
 export default function CurrencyLogo({
   address,
-  size = '24px',
+  size = '36px',
   style,
   ...rest
 }: {

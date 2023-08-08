@@ -1,21 +1,24 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { darken } from 'polished'
 import styled from 'styled-components'
 import LogoDark from '../../assets/svg/logo_white.svg'
 import ChronosLogo from '../../assets/svg/chronos-logo.svg'
+import ChronosHourglass from '../../assets/svg/hourglass.svg'
+import MenuIcon from '../../assets/svg/menu.svg'
 import Menu from '../Menu'
-import Row, { RowFixed, RowBetween } from '../Row'
+import Row, { RowFixed, RowBetween, SearchRow } from '../Row'
 import SearchSmall from 'components/Search'
 import NetworkDropdown from 'components/Menu/NetworkDropdown'
 import { useActiveNetworkVersion } from 'state/application/hooks'
 import { networkPrefix } from 'utils/networkPrefix'
 import { AutoColumn } from 'components/Column'
 
-const HeaderFrame = styled.div`
+const HeaderFrame = styled.div<{ notAtTop?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-around;
+  backdrop-filter: blur(20px);
   align-items: center;
   flex-direction: row;
   width: 100%;
@@ -34,6 +37,7 @@ const HeaderFrame = styled.div`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 0.5rem 1rem;
   `}
+  ${({ notAtTop }) => notAtTop && 'border-bottom: 1px solid rgba(255,255,255,0.2)'}
 `
 
 const HeaderControls = styled.div`
@@ -55,12 +59,14 @@ const HeaderRow = styled(RowFixed)`
   width: 100%;
   @media (max-width: 1080px) {
     width: 100%;
+    display: none;
   }
 `
 
 const HeaderOptions = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-left: 1rem;
   @media (max-width: 1080px) {
     padding: 0.5rem;
@@ -97,7 +103,7 @@ const StyledNavLink = styled(NavLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text3};
-  font-size: 14px;
+  font-size: 12px;
   width: fit-content;
   margin: 0 6px;
   padding: 8px 12px;
@@ -153,11 +159,38 @@ const SmallContentGrouping = styled.div`
   }
 `
 
+const MenuButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 55px;
+  min-width: 55px;
+  border-radius: 15px;
+  background: #2b263e;
+
+  @media (max-width: 1080px) {
+    height: 48px;
+    min-width: 48px;
+  }
+`
+
 export default function Header() {
   const [activeNewtork] = useActiveNetworkVersion()
+  const [notAtTop, setNotAtTop] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setNotAtTop(window.scrollY > 0)
+    }
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
-    <HeaderFrame>
+    <HeaderFrame notAtTop={notAtTop}>
       <HeaderRow>
         <Title to={networkPrefix(activeNewtork)}>
           <UniIcon>
@@ -180,16 +213,35 @@ export default function Header() {
             Tokens
           </StyledNavLink>
         </HeaderOptions>
+        <Menu />
       </HeaderRow>
-      {/* <SmallContentGrouping>
+      <SmallContentGrouping>
         <AutoColumn gap="sm">
+          {/* <NetworkDropdown /> */}
           <RowBetween>
-            <NetworkDropdown />
-            <Menu />
+            <img width={'150px'} height={'50px'} src={ChronosHourglass} alt="logo" />
+            <HeaderOptions>
+              <StyledNavLink
+                id={`pool-nav-link`}
+                to={networkPrefix(activeNewtork)}
+                isActive={(match, { pathname }) => pathname === '/'}
+              >
+                Overview
+              </StyledNavLink>
+              <StyledNavLink id={`stake-nav-link`} to={networkPrefix(activeNewtork) + 'pools'}>
+                Pools
+              </StyledNavLink>
+              <StyledNavLink id={`stake-nav-link`} to={networkPrefix(activeNewtork) + 'tokens'}>
+                Tokens
+              </StyledNavLink>
+            </HeaderOptions>
           </RowBetween>
-          <SearchSmall />
+          <SearchRow>
+            <SearchSmall />
+            <Menu />
+          </SearchRow>
         </AutoColumn>
-      </SmallContentGrouping> */}
+      </SmallContentGrouping>
     </HeaderFrame>
   )
 }

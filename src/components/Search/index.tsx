@@ -20,11 +20,18 @@ import { TOKEN_HIDE, POOL_HIDE } from '../../constants/index'
 import { useActiveNetworkVersion } from 'state/application/hooks'
 import { networkPrefix } from 'utils/networkPrefix'
 import SearchIcon from '../../assets/svg/search.svg'
+import WatchlistIcon from '../../assets/svg/watchlist.svg'
 
 const Container = styled.div`
   position: relative;
   z-index: 30;
   width: 100%;
+  display: flex;
+  justify-content: center;
+
+  @media (max-width: 1080px) {
+    width: 80%;
+  } ;
 `
 
 const Wrapper = styled(Row)`
@@ -75,22 +82,18 @@ const SearchIconWrapper = styled.div`
 
 const Menu = styled.div<{ hide: boolean }>`
   display: flex;
-  flex-direction: column;
   z-index: 9999;
   width: 800px;
   top: 50px;
   max-height: 600px;
   overflow: auto;
-  right: 0;
   padding: 1.5rem;
   padding-bottom: 1.5rem;
   position: absolute;
-  background: #2e2b42;
-  border-radius: 8px;
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(180deg, rgba(53, 49, 71, 0) 0%, rgba(53, 49, 71, 0.93) 15.17%);
+  backdrop-filter: blur(20px);
+  border-radius: 0px 0px 20px 20px;
   display: ${({ hide }) => hide && 'none'};
-  border: 1px solid ${({ theme }) => theme.pink1};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     position: absolute;
@@ -144,18 +147,20 @@ const HoverRowLink = styled.div`
   }
 `
 
-const OptionButton = styled.div<{ enabled: boolean }>`
+const OptionButton = styled.div<{ isSearch?: boolean }>`
   width: fit-content;
-  padding: 4px 8px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 20px;
   display: flex;
   font-size: 12px;
   font-weight: 600;
   margin-right: 10px;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme, enabled }) => (enabled ? theme.pink1 : 'transparent')};
-  color: ${({ theme, enabled }) => (enabled ? theme.white : theme.pink1)};
+  gap: 10px;
+  background: ${({ isSearch }) =>
+    isSearch ? 'linear-gradient(67.55deg, #3F4AB3 4.5%, #7A64D0 95.77%)' : 'rgba(255,255,255, 0.1)'};
+  color: white;
   :hover {
     opacity: 0.6;
     cursor: pointer;
@@ -236,7 +241,6 @@ const Search = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
 
   return (
     <Hotkeys keyName="command+/" onKeyDown={handleDown}>
-      {showMenu ? <Blackout /> : null}
       <Container>
         <Wrapper {...rest}>
           <SearchIconWrapper>
@@ -262,11 +266,12 @@ const Search = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
           <AutoColumn gap="lg">
             <AutoColumn gap="sm">
               <RowFixed>
-                <OptionButton enabled={!showWatchlist} onClick={() => setShowWatchlist(false)}>
+                <OptionButton isSearch onClick={() => setShowWatchlist(false)}>
+                  <img width="15px" height="15px" alt="Search" src={SearchIcon} />
                   Search
                 </OptionButton>
-                <OptionButton enabled={showWatchlist} onClick={() => setShowWatchlist(true)}>
-                  Watchlist
+                <OptionButton onClick={() => setShowWatchlist(true)}>
+                  <img width="15px" height="15px" alt="Visilibility" src={WatchlistIcon} /> Watchlist
                 </OptionButton>
               </RowFixed>
             </AutoColumn>
@@ -334,7 +339,7 @@ const Search = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
               hide={!(tokensForList.length > 3 && tokensForList.length >= tokensShown)}
               ref={textRef}
             >
-              See more...
+              See all tokens
             </HoverText>
             <Break />
             <ResponsiveGrid>
@@ -402,7 +407,7 @@ const Search = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
               hide={!(poolForList.length > 3 && poolForList.length >= poolsShown)}
               ref={textRef}
             >
-              See more...
+              See all tokens
             </HoverText>
           </AutoColumn>
         </Menu>

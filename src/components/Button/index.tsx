@@ -416,14 +416,14 @@ export const SmallOptionButton = styled(Base)<{ active?: boolean }>`
   padding: 4px;
   width: fit-content;
   font-size: 12px;
-  border-radius: 4px;
+  border-radius: 20px;
+  border: none;
   min-width: 36px;
-  background-color: transparent;
+  background: transparent;
   color: ${({ active, theme }) => (active ? 'pink' : 'white')};
 
   :hover {
-    opacity: 0.6;
-  }
+    background: linear-gradient(67.55deg, #7a64d0 4.5%, #3f4ab3 95.77%);
 `
 
 export const SmallOption = styled(ButtonOutlined)`

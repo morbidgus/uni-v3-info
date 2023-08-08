@@ -18,7 +18,8 @@ const Wrapper = styled(Card)`
   padding: 1rem;
   padding-right: 2rem;
   display: flex;
-  background-color: #2e2b42;
+  background-color: rgba(53, 49, 71, 0.5);
+  backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   flex-direction: column;
   > * {

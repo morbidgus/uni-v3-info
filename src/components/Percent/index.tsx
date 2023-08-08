@@ -5,7 +5,7 @@ import styled from 'styled-components'
 const Wrapper = styled(TYPE.main)<{ fontWeight: number; fontSize: string; negative: boolean; neutral: boolean }>`
   font-size: ${({ fontSize }) => fontSize};
   font-weight: ${({ fontWeight }) => fontWeight};
-  color: ${({ theme, negative }) => (negative ? theme.red1 : theme.green1)};
+  color: ${({ theme, negative }) => (negative ? '#FF2A5F' : '#27F291')};
 `
 
 export interface LogoProps {
@@ -20,7 +20,7 @@ export interface LogoProps {
 export default function Percent({
   value,
   decimals = 2,
-  fontSize = '16px',
+  fontSize = '14px',
   fontWeight = 500,
   wrap = false,
   simple = false,
@@ -47,8 +47,8 @@ export default function Percent({
   return (
     <Wrapper {...rest} fontWeight={fontWeight} fontSize={fontSize} negative={truncated < 0} neutral={truncated === 0}>
       {wrap && '('}
-      {truncated < 0 && '↓'}
-      {truncated > 0 && '↑'}
+      {truncated < 0 && '-'}
+      {truncated > 0 && '+'}
       {Math.abs(value).toFixed(decimals)}%{wrap && ')'}
     </Wrapper>
   )

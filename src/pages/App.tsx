@@ -17,6 +17,7 @@ import { ExternalLink, TYPE } from 'theme'
 import { useActiveNetworkVersion, useSubgraphStatus } from 'state/application/hooks'
 import { DarkGreyCard } from 'components/Card'
 import { SUPPORTED_NETWORK_VERSIONS, EthereumNetworkInfo, OptimismNetworkInfo } from 'constants/networks'
+import Footer from 'components/Footer'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -179,6 +180,7 @@ export default function App() {
               <Marginer />
             </BodyWrapper>
           )}
+          <Footer />
         </AppWrapper>
       )}
     </Suspense>

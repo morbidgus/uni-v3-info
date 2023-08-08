@@ -15,15 +15,18 @@ import useTheme from 'hooks/useTheme'
 import HoverInlineText from 'components/HoverInlineText'
 import { useActiveNetworkVersion } from 'state/application/hooks'
 import { OptimismNetworkInfo } from 'constants/networks'
+import GradientSquare from '../../assets/svg/gradient-square.svg'
 
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
+  padding: 0;
 `
 
 const ResponsiveGrid = styled.div`
   display: grid;
   grid-gap: 1em;
   align-items: center;
+  padding: 16px 1rem;
 
   grid-template-columns: 1.5fr repeat(5, 1fr);
 
@@ -64,19 +67,56 @@ const ResponsiveGrid = styled.div`
   }
 `
 
-const SortText = styled.button<{ active: boolean }>`
+const LinkWrapper = styled.div`
   cursor: pointer;
-  font-weight: ${({ active }) => (active ? 500 : 400)};
-  margin-right: 0.75rem !important;
-  border: none;
-  background-color: transparent;
-  font-size: 1rem;
-  padding: 0px;
-  color: ${({ active, theme }) => (active ? theme.text1 : theme.text3)};
-  outline: none;
-  @media screen and (max-width: 600px) {
-    font-size: 14px;
+  :hover {
+    background: #36314e;
   }
+`
+
+const SortText = styled.div<{ active?: boolean }>`
+  display: flex;
+  padding: 0.625rem 1.25rem;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 20px;
+  font-weight: 400;
+  background: ${({ active }) => (active ? 'linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%)' : '#2b2940')};
+  font-size: 12px;
+  color: white;
+  margin-right: 10px;
+
+  :hover {
+    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
+  }
+
+  @media screen and (max-width: 600px) {
+    font-size: 12px;
+  }
+`
+
+const TransactionLabelContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 0.625rem 0.9375rem;
+  gap: 5px;
+`
+
+const TransactionLabel = styled.span`
+  font-size: 14px;
+  background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+font-size: 10px;
+`};
 `
 
 const SORT_FIELD = {
@@ -96,39 +136,82 @@ const DataRow = ({ transaction, color }: { transaction: Transaction; color?: str
   const theme = useTheme()
 
   return (
-    <ResponsiveGrid>
-      <ExternalLink href={getEtherscanLink(1, transaction.hash, 'transaction', activeNetwork)}>
-        <Label color={color ?? theme.blue1} fontWeight={400}>
-          {transaction.type === TransactionType.MINT
-            ? `Add ${transaction.token0Symbol} and ${transaction.token1Symbol}`
-            : transaction.type === TransactionType.SWAP
-            ? `Swap ${inputTokenSymbol} for ${outputTokenSymbol}`
-            : `Remove ${transaction.token0Symbol} and ${transaction.token1Symbol}`}
-        </Label>
-      </ExternalLink>
-      <Label end={1} fontWeight={400}>
-        {formatDollarAmount(transaction.amountUSD)}
-      </Label>
-      <Label end={1} fontWeight={400}>
-        <HoverInlineText text={`${formatAmount(abs0)}  ${transaction.token0Symbol}`} maxCharacters={16} />
-      </Label>
-      <Label end={1} fontWeight={400}>
-        <HoverInlineText text={`${formatAmount(abs1)}  ${transaction.token1Symbol}`} maxCharacters={16} />
-      </Label>
-      <Label end={1} fontWeight={400}>
-        <ExternalLink
-          href={getEtherscanLink(1, transaction.sender, 'address', activeNetwork)}
-          style={{ color: color ?? theme.blue1 }}
-        >
-          {shortenAddress(transaction.sender)}
+    <LinkWrapper>
+      <ResponsiveGrid>
+        <ExternalLink href={getEtherscanLink(1, transaction.hash, 'transaction', activeNetwork)}>
+          <TransactionLabelContainer>
+            <img height="18px" width="18px" alt="square-icon" src={GradientSquare} />
+            <TransactionLabel>
+              {transaction.type === TransactionType.MINT
+                ? `Add ${transaction.token0Symbol} and ${transaction.token1Symbol}`
+                : transaction.type === TransactionType.SWAP
+                ? `Swap ${inputTokenSymbol} for ${outputTokenSymbol}`
+                : `Remove ${transaction.token0Symbol} and ${transaction.token1Symbol}`}
+            </TransactionLabel>
+          </TransactionLabelContainer>
         </ExternalLink>
-      </Label>
-      <Label end={1} fontWeight={400}>
-        {formatTime(transaction.timestamp, activeNetwork === OptimismNetworkInfo ? 8 : 0)}
-      </Label>
-    </ResponsiveGrid>
+        <Label end={1} fontWeight={400}>
+          {formatDollarAmount(transaction.amountUSD)}
+        </Label>
+        <Label end={1} fontWeight={400}>
+          <HoverInlineText text={`${formatAmount(abs0)}  ${transaction.token0Symbol}`} maxCharacters={16} />
+        </Label>
+        <Label end={1} fontWeight={400}>
+          <HoverInlineText text={`${formatAmount(abs1)}  ${transaction.token1Symbol}`} maxCharacters={16} />
+        </Label>
+        <Label end={1} fontWeight={400}>
+          <ExternalLink
+            href={getEtherscanLink(1, transaction.sender, 'address', activeNetwork)}
+            style={{ color: color ?? theme.blue1 }}
+          >
+            <TransactionLabel>{shortenAddress(transaction.sender)}</TransactionLabel>
+          </ExternalLink>
+        </Label>
+        <Label end={1} fontWeight={400}>
+          {formatTime(transaction.timestamp, activeNetwork === OptimismNetworkInfo ? 8 : 0)}
+        </Label>
+      </ResponsiveGrid>
+    </LinkWrapper>
   )
 }
+
+const PaginationButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+`
+
+const PageNumberButtons = styled.div`
+  display: flex;
+  gap: 5px;
+`
+
+const PageButton = styled.button<{ active?: boolean }>`
+  cursor: pointer;
+  border: none;
+  background-color: #2b2940;
+  color: ${({ active, theme }) => (active ? theme.white : 'rgba(255, 255, 255, 0.3)')};
+  padding: 6px 15px;
+  border-radius: 100px;
+  font-size: 15px;
+  outline: none;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`
+
+const PaginationEllipsis = styled.span`
+  cursor: default;
+  color: rgba(255, 255, 255, 0.3);
+  border-radius: 100px;
+  padding: 6px 15px;
+  font-size: 15px;
+  border: none;
+  background-color: #2b2940;
+`
 
 export default function TransactionTable({
   transactions,
@@ -196,13 +279,33 @@ export default function TransactionTable({
     [sortDirection, sortField]
   )
 
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= maxPage) {
+        setPage(newPage)
+      }
+    },
+    [maxPage]
+  )
+
+  const pageNumbers = useMemo(() => {
+    const arr = []
+    for (let i = 1; i <= maxPage; i++) {
+      arr.push(i)
+    }
+    return arr
+  }, [maxPage])
+
+  const isPrevDisabled = page === 1
+  const isNextDisabled = page === maxPage
+
   if (!transactions) {
     return <Loader />
   }
 
   return (
     <Wrapper>
-      <AutoColumn gap="16px">
+      <AutoColumn>
         <ResponsiveGrid>
           <RowFixed>
             <SortText
@@ -268,23 +371,32 @@ export default function TransactionTable({
           return null
         })}
         {sortedTransactions.length === 0 ? <TYPE.main>No Transactions</TYPE.main> : undefined}
-        <PageButtons>
-          <div
-            onClick={() => {
-              setPage(page === 1 ? page : page - 1)
-            }}
-          >
-            <Arrow faded={page === 1 ? true : false}>←</Arrow>
-          </div>
-          <TYPE.body>{'Page ' + page + ' of ' + maxPage}</TYPE.body>
-          <div
-            onClick={() => {
-              setPage(page === maxPage ? page : page + 1)
-            }}
-          >
-            <Arrow faded={page === maxPage ? true : false}>→</Arrow>
-          </div>
-        </PageButtons>
+        <PaginationButtons>
+          <PageButton onClick={() => handlePageChange(page - 1)} disabled={isPrevDisabled}>
+            ←
+          </PageButton>
+          <PageNumberButtons>
+            {pageNumbers.map((pageNumber, index) => {
+              if (pageNumber === 1 || pageNumber === maxPage || (pageNumber >= page - 2 && pageNumber <= page + 2)) {
+                return (
+                  <PageButton
+                    key={pageNumber}
+                    onClick={() => handlePageChange(pageNumber)}
+                    active={pageNumber === page}
+                  >
+                    {pageNumber}
+                  </PageButton>
+                )
+              } else if (pageNumber === page - 5 || pageNumber === page + 5) {
+                return <PaginationEllipsis key={index}>...</PaginationEllipsis>
+              }
+              return null
+            })}
+          </PageNumberButtons>
+          <PageButton onClick={() => handlePageChange(page + 1)} disabled={isNextDisabled}>
+            →
+          </PageButton>
+        </PaginationButtons>
       </AutoColumn>
     </Wrapper>
   )

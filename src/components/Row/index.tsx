@@ -23,6 +23,17 @@ export const RowBetween = styled(Row)`
   justify-content: space-between;
 `
 
+export const SearchRow = styled(Row)`
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+`
+
+export const TableRowBetween = styled(Row)`
+  justify-content: space-between;bn
+  margin-top: 2rem;
+`
+
 export const RowFlat = styled.div`
   display: flex;
   align-items: flex-end;
@@ -41,6 +52,7 @@ export const AutoRow = styled(Row)<{ gap?: string; justify?: string }>`
 export const RowFixed = styled(Row)<{ gap?: string; justify?: string }>`
   width: fit-content;
   margin: ${({ gap }) => gap && `-${gap}`};
+  align-items: center;
 `
 
 export const ResponsiveRow = styled(RowBetween)`

@@ -19,12 +19,14 @@ import { useActiveNetworkVersion } from 'state/application/hooks'
 
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
+  padding: 0;
 `
 
 const ResponsiveGrid = styled.div`
   display: grid;
   grid-gap: 1em;
   align-items: center;
+  padding: 16px 1rem;
 
   grid-template-columns: 20px 3.5fr repeat(3, 1fr);
 
@@ -54,8 +56,46 @@ const LinkWrapper = styled(Link)`
   text-decoration: none;
   :hover {
     cursor: pointer;
-    opacity: 0.7;
+    background: #36314e;
   }
+`
+
+const PaginationButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+`
+
+const PageNumberButtons = styled.div`
+  display: flex;
+  gap: 5px;
+`
+
+const PageButton = styled.button<{ active?: boolean }>`
+  cursor: pointer;
+  border: none;
+  background-color: #2b2940;
+  color: ${({ active, theme }) => (active ? theme.white : 'rgba(255, 255, 255, 0.3)')};
+  padding: 6px 15px;
+  border-radius: 100px;
+  font-size: 15px;
+  outline: none;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`
+
+const PaginationEllipsis = styled.span`
+  cursor: default;
+  color: rgba(255, 255, 255, 0.3);
+  border-radius: 100px;
+  padding: 6px 15px;
+  font-size: 15px;
+  border: none;
+  background-color: #2b2940;
 `
 
 const SORT_FIELD = {
@@ -68,18 +108,25 @@ const SORT_FIELD = {
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
   const [activeNetwork] = useActiveNetworkVersion()
 
+  const formattedIndex = (index + 1).toString().padStart(2, '0')
+
   return (
     <LinkWrapper to={networkPrefix(activeNetwork) + 'pools/' + poolData.address}>
       <ResponsiveGrid>
-        <Label fontWeight={400}>{index + 1}</Label>
+        <Label fontWeight={400}>{formattedIndex}</Label>
         <Label fontWeight={400}>
           <RowFixed>
-            <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} />
+            <DoubleCurrencyLogo
+              address0={poolData.token0.address}
+              address1={poolData.token1.address}
+              size={36}
+              margin
+            />
             <TYPE.label ml="8px">
               {poolData.token0.symbol}/{poolData.token1.symbol}
             </TYPE.label>
-            <GreyBadge ml="10px" fontSize="14px">
-              {feeTierPercent(poolData.feeTier)}
+            <GreyBadge ml="5px" fontSize="14px">
+              +{feeTierPercent(poolData.feeTier)}
             </GreyBadge>
           </RowFixed>
         </Label>
@@ -152,6 +199,26 @@ export default function PoolTable({ poolDatas, maxItems = MAX_ITEMS }: { poolDat
     [sortDirection, sortField]
   )
 
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= maxPage) {
+        setPage(newPage)
+      }
+    },
+    [maxPage]
+  )
+
+  const pageNumbers = useMemo(() => {
+    const arr = []
+    for (let i = 1; i <= maxPage; i++) {
+      arr.push(i)
+    }
+    return arr
+  }, [maxPage])
+
+  const isPrevDisabled = page === 1
+  const isNextDisabled = page === maxPage
+
   if (!poolDatas) {
     return <Loader />
   }
@@ -159,7 +226,7 @@ export default function PoolTable({ poolDatas, maxItems = MAX_ITEMS }: { poolDat
   return (
     <Wrapper>
       {sortedPools.length > 0 ? (
-        <AutoColumn gap="16px">
+        <AutoColumn>
           <ResponsiveGrid>
             <Label color={theme.text2}>#</Label>
             <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.feeTier)}>
@@ -169,10 +236,10 @@ export default function PoolTable({ poolDatas, maxItems = MAX_ITEMS }: { poolDat
               TVL {arrow(SORT_FIELD.tvlUSD)}
             </ClickableText>
             <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
-              Volume 24H {arrow(SORT_FIELD.volumeUSD)}
+              24H Volume {arrow(SORT_FIELD.volumeUSD)}
             </ClickableText>
             <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
-              Volume 7D {arrow(SORT_FIELD.volumeUSDWeek)}
+              7d Volume {arrow(SORT_FIELD.volumeUSDWeek)}
             </ClickableText>
           </ResponsiveGrid>
           <Break />
@@ -187,23 +254,32 @@ export default function PoolTable({ poolDatas, maxItems = MAX_ITEMS }: { poolDat
             }
             return null
           })}
-          <PageButtons>
-            <div
-              onClick={() => {
-                setPage(page === 1 ? page : page - 1)
-              }}
-            >
-              <Arrow faded={page === 1 ? true : false}>←</Arrow>
-            </div>
-            <TYPE.body>{'Page ' + page + ' of ' + maxPage}</TYPE.body>
-            <div
-              onClick={() => {
-                setPage(page === maxPage ? page : page + 1)
-              }}
-            >
-              <Arrow faded={page === maxPage ? true : false}>→</Arrow>
-            </div>
-          </PageButtons>
+          <PaginationButtons>
+            <PageButton onClick={() => handlePageChange(page - 1)} disabled={isPrevDisabled}>
+              ←
+            </PageButton>
+            <PageNumberButtons>
+              {pageNumbers.map((pageNumber, index) => {
+                if (pageNumber === 1 || pageNumber === maxPage || (pageNumber >= page - 2 && pageNumber <= page + 2)) {
+                  return (
+                    <PageButton
+                      key={pageNumber}
+                      onClick={() => handlePageChange(pageNumber)}
+                      active={pageNumber === page}
+                    >
+                      {pageNumber}
+                    </PageButton>
+                  )
+                } else if (pageNumber === page - 5 || pageNumber === page + 5) {
+                  return <PaginationEllipsis key={index}>...</PaginationEllipsis>
+                }
+                return null
+              })}
+            </PageNumberButtons>
+            <PageButton onClick={() => handlePageChange(page + 1)} disabled={isNextDisabled}>
+              →
+            </PageButton>
+          </PaginationButtons>
         </AutoColumn>
       ) : (
         <LoadingRows>

@@ -50,3 +50,19 @@ export type PriceChartEntry = {
   high: number
   low: number
 }
+
+export interface TokenData {
+  name: string
+  symbol: string
+  decimals: number
+  address: any
+  price_quote?: number
+  is_low_liquidity?: boolean
+}
+
+export interface AvailableTokenData {
+  commonTokens: TokenData[]
+  whitelistedTokens: TokenData[]
+  tokens: TokenData[]
+  tokensDictionary: Record<string, TokenData>
+}

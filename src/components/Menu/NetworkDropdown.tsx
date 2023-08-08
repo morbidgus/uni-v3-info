@@ -19,6 +19,7 @@ import { EthereumNetworkInfo } from '../../constants/networks'
 const Container = styled.div`
   position: relative;
   z-index: 40;
+  width: fit-content;
 `
 
 const Wrapper = styled.div`
