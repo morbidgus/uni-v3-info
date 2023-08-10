@@ -29,6 +29,10 @@ import { useActiveNetworkVersion } from 'state/application/hooks'
 import { networkPrefix } from 'utils/networkPrefix'
 import { EthereumNetworkInfo } from 'constants/networks'
 import { GenericImageWrapper } from 'components/Logo'
+import FavoriteFilledIcon from '../../assets/svg/favorite-star-filled.svg'
+import FavoriteIcon from '../../assets/svg/favorite-star.svg'
+import OpenNewTabIcon from '../../assets/svg/open-new-tab.svg'
+import ArrowRightIcon from '../../assets/svg/arrow-right.svg'
 
 const ContentLayout = styled.div`
   display: grid;
@@ -41,9 +45,11 @@ const ContentLayout = styled.div`
   }
 `
 
-const TokenButton = styled(GreyCard)`
+const TokenButton = styled.div`
+  background-color: #2e293f;
   padding: 8px 12px;
-  border-radius: 10px;
+  border-radius: 20px;
+  margin-right: 12px;
   :hover {
     cursor: pointer;
     opacity: 0.6;
@@ -63,6 +69,13 @@ const ToggleRow = styled(RowBetween)`
   @media screen and (max-width: 600px) {
     flex-direction: column;
   }
+`
+
+const FavoriteWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `
 
 enum ChartView {
@@ -156,27 +169,38 @@ export default function PoolPage({
                 poolData.feeTier
               )} `}</TYPE.label>
             </AutoRow>
-            <RowFixed gap="10px" align="center">
-              <SavedIcon fill={savedPools.includes(address)} onClick={() => addSavedPool(address)} />
-              <StyledExternalLink href={getEtherscanLink(1, address, 'address', activeNetwork)}>
-                <ExternalLink stroke={theme.text2} size={'17px'} style={{ marginLeft: '12px' }} />
-              </StyledExternalLink>
-            </RowFixed>
           </RowBetween>
           <ResponsiveRow align="flex-end">
             <AutoColumn gap="lg">
-              <RowFixed>
-                <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} size={24} />
+              <RowFixed align="center">
+                <DoubleCurrencyLogo
+                  address0={poolData.token0.address}
+                  address1={poolData.token1.address}
+                  size={40}
+                  margin
+                />
                 <TYPE.label
                   ml="8px"
                   mr="8px"
-                  fontSize="24px"
+                  fontSize="30px"
                 >{` ${poolData.token0.symbol} / ${poolData.token1.symbol} `}</TYPE.label>
                 <GreyBadge>{feeTierPercent(poolData.feeTier)}</GreyBadge>
                 {activeNetwork === EthereumNetworkInfo ? null : (
-                  <GenericImageWrapper src={activeNetwork.imageURL} style={{ marginLeft: '8px' }} size={'26px'} />
+                  <GenericImageWrapper src={activeNetwork.imageURL} style={{ marginLeft: '8px' }} size={'40px'} />
                 )}
+                <FavoriteWrapper onClick={() => addSavedPool(address)}>
+                  {savedPools.includes(address) ? (
+                    <img src={FavoriteFilledIcon} height="27px" width="27px" alt="star" />
+                  ) : (
+                    <img src={FavoriteIcon} height="27px" width="27px" alt="star" />
+                  )}
+                </FavoriteWrapper>
+
+                <StyledExternalLink href={getEtherscanLink(1, address, 'address', activeNetwork)}>
+                  <img src={OpenNewTabIcon} height="23px" width="23px" alt="open in new tab" />
+                </StyledExternalLink>
               </RowFixed>
+
               <ResponsiveRow>
                 <StyledInternalLink to={networkPrefix(activeNetwork) + 'tokens/' + poolData.token0.address}>
                   <TokenButton>
@@ -219,8 +243,9 @@ export default function PoolPage({
                 <StyledExternalLink
                   href={`https://app.uniswap.org/#/swap?inputCurrency=${poolData.token0.address}&outputCurrency=${poolData.token1.address}`}
                 >
-                  <ButtonPrimary width="100px" style={{ height: '44px' }}>
+                  <ButtonPrimary>
                     Trade
+                    <img src={ArrowRightIcon} height={20} width={20} alt="arrow" />
                   </ButtonPrimary>
                 </StyledExternalLink>
               </RowFixed>

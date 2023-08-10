@@ -30,7 +30,7 @@ export const SearchRow = styled(Row)`
 `
 
 export const TableRowBetween = styled(Row)`
-  justify-content: space-between;bn
+  justify-content: space-between;
   margin-top: 2rem;
 `
 

@@ -28,9 +28,9 @@ export default function TokensOverview() {
   return (
     <PageWrapper>
       <AutoColumn gap="lg">
-        <TYPE.main>Your Watchlist</TYPE.main>
+        <TYPE.subHeader fontSize="30px">Watchlist</TYPE.subHeader>
         {savedTokens.length > 0 ? (
-          <TokenTable tokenDatas={watchListTokens} />
+          <TokenTable tokenDatas={watchListTokens} maxItems={3} />
         ) : (
           <DarkGreyCard>
             <TYPE.main>Saved tokens will appear here</TYPE.main>
@@ -39,12 +39,12 @@ export default function TokensOverview() {
         <HideSmall>
           <DarkGreyCard style={{ paddingTop: '12px' }}>
             <AutoColumn gap="md">
-              <TYPE.mediumHeader fontSize="16px">Top Movers</TYPE.mediumHeader>
+              <TYPE.subHeader fontSize="30px">Top Movers</TYPE.subHeader>
               <TopTokenMovers />
             </AutoColumn>
           </DarkGreyCard>
         </HideSmall>
-        <TYPE.main>All Tokens</TYPE.main>
+        <TYPE.subHeader fontSize="30px">Tokens</TYPE.subHeader>
         <TokenTable tokenDatas={formattedTokens} />
       </AutoColumn>
     </PageWrapper>

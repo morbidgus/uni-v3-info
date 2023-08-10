@@ -13,6 +13,7 @@ import NetworkDropdown from 'components/Menu/NetworkDropdown'
 import { useActiveNetworkVersion } from 'state/application/hooks'
 import { networkPrefix } from 'utils/networkPrefix'
 import { AutoColumn } from 'components/Column'
+import ColorModeSwitch from 'components/ColorModeSwitch'
 
 const HeaderFrame = styled.div<{ notAtTop?: boolean }>`
   display: flex;
@@ -80,7 +81,6 @@ const Title = styled(NavLink)`
   pointer-events: auto;
   justify-self: flex-end
   margin-right: 2rem;
-  margin-left: 2rem;
   :hover {
     cursor: pointer;
   }
@@ -214,6 +214,7 @@ export default function Header() {
           </StyledNavLink>
         </HeaderOptions>
         <Menu />
+        <ColorModeSwitch />
       </HeaderRow>
       <SmallContentGrouping>
         <AutoColumn gap="sm">

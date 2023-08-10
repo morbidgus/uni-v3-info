@@ -17,10 +17,10 @@ const Base = styled(RebassButton)<{
   width: ${({ width }) => (width ? width : '100%')};
   font-weight: 500;
   text-align: center;
-  border-radius: 12px;
+  border-radius: 20px;
   border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
   outline: none;
-  border: 1px solid transparent;
+  border: none;
   color: white;
   text-decoration: none;
   display: flex;
@@ -40,18 +40,18 @@ const Base = styled(RebassButton)<{
 `
 
 export const ButtonPrimary = styled(Base)<{ bgColor?: string }>`
-  background-color: ${({ theme, bgColor }) => bgColor ?? theme.primary1};
+  background: linear-gradient(67.55deg, #6d78e4 4.5%, #7a64d0 95.77%);
+  padding: 10px 20px;
+
   color: white;
   &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme, bgColor }) => darken(0.05, bgColor ?? theme.primary1)};
-    background-color: ${({ theme, bgColor }) => darken(0.05, bgColor ?? theme.primary1)};
+    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
   }
   &:hover {
-    background-color: ${({ theme, bgColor }) => darken(0.05, bgColor ?? theme.primary1)};
+    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
   }
   &:active {
-    box-shadow: 0 0 0 1pt ${({ theme, bgColor }) => darken(0.1, bgColor ?? theme.primary1)};
-    background-color: ${({ theme, bgColor }) => darken(0.1, bgColor ?? theme.primary1)};
+    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
   }
   &:disabled {
     background-color: ${({ theme, altDisabledStyle, disabled }) =>
@@ -60,7 +60,7 @@ export const ButtonPrimary = styled(Base)<{ bgColor?: string }>`
       altDisabledStyle ? (disabled ? theme.text3 : 'white') : theme.text3};
     cursor: auto;
     box-shadow: none;
-    border: 1px solid transparent;
+    border: none;
     outline: none;
     opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
   }
@@ -96,7 +96,7 @@ export const ButtonLight = styled(Base)`
 
 export const ButtonGray = styled(Base)`
   background-color: ${({ theme }) => theme.bg3};
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text2};fgcfxfx
   font-size: 16px;
   font-weight: 500;
   outline: none;
@@ -393,6 +393,7 @@ const HoverIcon = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  margin-left: 8px;
   :hover {
     cursor: pointer;
     opacity: 0.6;

@@ -18,6 +18,7 @@ import { useActiveNetworkVersion, useSubgraphStatus } from 'state/application/ho
 import { DarkGreyCard } from 'components/Card'
 import { SUPPORTED_NETWORK_VERSIONS, EthereumNetworkInfo, OptimismNetworkInfo } from 'constants/networks'
 import Footer from 'components/Footer'
+import TransactionsPage from './Transactions/TransactionsPage'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -175,6 +176,7 @@ export default function App() {
                 <Route exact strict path="/:networkID?/pools" component={PoolsOverview} />
                 <Route exact strict path="/:networkID?/tokens/:address" component={RedirectInvalidToken} />
                 <Route exact strict path="/:networkID?/tokens" component={TokensOverview} />
+                <Route exact strict path="/:networkID?/transactions" component={TransactionsPage} />
                 <Route exact path="/:networkID?" component={Home} />
               </Switch>
               <Marginer />

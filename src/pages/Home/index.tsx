@@ -32,12 +32,19 @@ import ArrowUpIcon from '../../assets/svg/arrow-up.svg'
 import ArrowDownIcon from '../../assets/svg/arrow-down.svg'
 import { Link } from 'react-router-dom'
 import ArrowRightIcon from '../../assets/svg/arrow-right.svg'
+import EmptyHourGlassIcon from '../../assets/svg/empty-hourglass.svg'
+import LockResetIcon from '../../assets/svg/lock-reset.svg'
+import AccountIcon from '../../assets/svg/account-circle.svg'
+import ScheduleIcon from '../../assets/svg/schedule-clock.svg'
+import ChronosHourglass from '../../assets/svg/hourglass.svg'
+import GaugesTable from 'components/GaugesTable'
 
 interface DailyInfoElementProps {
   title: string
   icon: any
   value: string
   percentageChange?: number
+  timeInfo?: string
 }
 
 const ChartWrapper = styled.div`
@@ -129,7 +136,7 @@ const InfoMainContainer = styled.div`
 `
 
 const InfoTitle = styled.span`
-  font-size: 16px;
+  font-size: 12px;
   margin-bottom: 5px;
 `
 
@@ -139,7 +146,7 @@ const InfoValueContainer = styled.div`
 `
 
 const InfoValue = styled.span`
-  font-size: 25px;
+  font-size: 16px;
   margin-right: 10px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -157,18 +164,21 @@ const InfoValueChange = styled.div<{ isNegative?: boolean }>`
 
 const ChangeValue = styled.span<{ isNegative?: boolean }>`
   color: ${({ isNegative }) => (isNegative ? '#FF2A5F' : '#27F291')};
+  font-size: 12px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  font-size: 12px;
+  font-size: 10px;
   `};
 `
 
 const InfoRowContainer = styled.div`
   width: 100%;
-  display: flex;
+  display: grid;
   gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-rows: 1fr;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-direction: column;
   `};
 `
@@ -248,7 +258,22 @@ font-size: 10px;
 `};
 `
 
-const DailyInfoElement: React.FC<DailyInfoElementProps> = ({ title, icon, value, percentageChange }: any) => {
+const TimeInfoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #6c74c3;
+  border-radius: 20px;
+  padding: 5px 10px;
+  gap: 4px;
+`
+
+const TimeInfoContent = styled.span`
+  color: #6c74c3;
+  font-size: 12px;
+`
+
+const DailyInfoElement: React.FC<DailyInfoElementProps> = ({ title, icon, value, percentageChange, timeInfo }: any) => {
   const truncated = parseFloat(percentageChange?.toFixed(2))
 
   return (
@@ -260,14 +285,23 @@ const DailyInfoElement: React.FC<DailyInfoElementProps> = ({ title, icon, value,
         <InfoTitle>{title}</InfoTitle>
         <InfoValueContainer>
           <InfoValue>{value}</InfoValue>
-          <InfoValueChange isNegative={truncated < 0}>
-            {truncated > 0 ? (
-              <img width="17px" height="17px" alt="arrow" src={ArrowUpIcon} />
-            ) : (
-              <img width="17px" height="17px" alt="arrow" src={ArrowDownIcon} />
-            )}
-            <ChangeValue isNegative={truncated < 0}>{Math.abs(percentageChange).toFixed(2)}%</ChangeValue>
-          </InfoValueChange>
+          {percentageChange && (
+            <InfoValueChange isNegative={truncated < 0}>
+              {truncated > 0 ? (
+                <img width="17px" height="17px" alt="arrow" src={ArrowUpIcon} />
+              ) : (
+                <img width="17px" height="17px" alt="arrow" src={ArrowDownIcon} />
+              )}
+
+              <ChangeValue isNegative={truncated < 0}>{Math.abs(percentageChange).toFixed(2)}%</ChangeValue>
+            </InfoValueChange>
+          )}
+          {timeInfo && (
+            <TimeInfoContainer>
+              <img src={ScheduleIcon} alt="schedule" />
+              <TimeInfoContent>{timeInfo}</TimeInfoContent>
+            </TimeInfoContainer>
+          )}
         </InfoValueContainer>
       </InfoMainContainer>
     </ContentContainer>
@@ -501,6 +535,25 @@ export default function Home() {
             percentageChange={protocolData?.tvlUSDChange}
             icon={LockIcon}
           />
+          <DailyInfoElement title="Current Epoch" value="Epoch 14" icon={EmptyHourGlassIcon} />
+          <DailyInfoElement title="Epoch Starts" value="03-08-2023" icon={EmptyHourGlassIcon} timeInfo={'00:00 UTC'} />
+          <DailyInfoElement title="Epoch End" value="10-08-3034" icon={EmptyHourGlassIcon} timeInfo={'00:00 UTC'} />
+        </InfoRowContainer>
+
+        <TableRowBetween>
+          <PageSubHeader>veCHR Analytics</PageSubHeader>
+          <ExploreLink to="vechr-analytics">
+            <LinkContent>Explore</LinkContent>
+            <ExploreIconContainer>
+              <img height={20} width={20} alt="arrow" src={ArrowRightIcon} />
+            </ExploreIconContainer>
+          </ExploreLink>
+        </TableRowBetween>
+
+        <InfoRowContainer>
+          <DailyInfoElement title="Total veCHR" value="36,576,007 veCHR" icon={ChronosHourglass} />
+          <DailyInfoElement title="Average Locked Duration" value="1.86 Years" icon={LockResetIcon} />
+          <DailyInfoElement title="veCHR Holders" value="3,919 Holders" icon={AccountIcon} />
         </InfoRowContainer>
 
         <TableRowBetween>
@@ -523,8 +576,25 @@ export default function Home() {
           </ExploreLink>
         </TableRowBetween>
         <PoolTable poolDatas={poolDatas} />
+
+        <TableRowBetween>
+          <TYPE.subHeader fontSize="30px">Gauges</TYPE.subHeader>
+          <ExploreLink to="pools">
+            <LinkContent>Explore</LinkContent>
+            <ExploreIconContainer>
+              <img height={20} width={20} alt="arrow" src={ArrowRightIcon} />
+            </ExploreIconContainer>
+          </ExploreLink>
+        </TableRowBetween>
+        <GaugesTable poolDatas={poolDatas} />
         <TableRowBetween>
           <TYPE.subHeader fontSize="30px">Transactions</TYPE.subHeader>
+          <ExploreLink to="transactions">
+            <LinkContent>Explore</LinkContent>
+            <ExploreIconContainer>
+              <img height={20} width={20} alt="arrow" src={ArrowRightIcon} />
+            </ExploreIconContainer>
+          </ExploreLink>
         </TableRowBetween>
         {transactions ? <TransactionsTable transactions={transactions} color={activeNetwork.primaryColor} /> : null}
       </AutoColumn>
