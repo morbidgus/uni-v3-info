@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, ReactNode } from 'react'
 import { ResponsiveContainer, XAxis, Tooltip, AreaChart, Area } from 'recharts'
 import styled from 'styled-components'
-import Card from 'components/Card'
 import { RowBetween } from 'components/Row'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -13,15 +12,12 @@ dayjs.extend(utc)
 
 const DEFAULT_HEIGHT = 300
 
-const Wrapper = styled(Card)`
+const Wrapper = styled.div`
   width: 100%;
   height: 380px;
   padding: 1rem;
   padding-right: 2rem;
   display: flex;
-  background-color: ${({ theme }) => theme.bg1};
-  backdrop-filter: blur(20px);
-  border: 1px solid ${({ theme }) => theme.border1};
   flex-direction: column;
   > * {
     font-size: 1rem;

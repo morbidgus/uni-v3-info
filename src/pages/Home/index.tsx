@@ -6,7 +6,7 @@ import { ResponsiveRow, RowBetween, RowFixed, TableRowBetween } from 'components
 import LineChart from 'components/LineChart/alt'
 import useTheme from 'hooks/useTheme'
 import { useProtocolChartData, useProtocolData, useProtocolTransactions } from 'state/protocol/hooks'
-import { DarkGreyCard } from 'components/Card'
+import { ChartCard } from 'components/Card'
 import { formatDollarAmount } from 'utils/numbers'
 import Percent from 'components/Percent'
 import { HideMedium, HideSmall, StyledInternalLink } from '../../theme/components'
@@ -47,7 +47,7 @@ interface DailyInfoElementProps {
   timeInfo?: string
 }
 
-const ChartWrapper = styled.div`
+const ChartWrapper = styled(ChartCard)`
   width: 49%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`

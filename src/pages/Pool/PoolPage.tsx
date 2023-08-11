@@ -15,7 +15,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { formatDollarAmount, formatAmount } from 'utils/numbers'
 import Percent from 'components/Percent'
 import { ButtonPrimary, ButtonGray, SavedIcon } from 'components/Button'
-import { DarkGreyCard, GreyCard, GreyBadge } from 'components/Card'
+import { DarkGreyCard, GreyCard, GreyBadge, ChartCard, DarkBlackCard } from 'components/Card'
 import { usePoolDatas, usePoolChartData, usePoolTransactions } from 'state/pools/hooks'
 import { unixToDate } from 'utils/date'
 import { ToggleWrapper, ToggleElementFree } from 'components/Toggle/index'
@@ -203,6 +203,26 @@ export default function PoolPage({
     )
   }
 
+  const ChartTypeSwitch: React.FC<any> = () => {
+    return (
+      <ToggleWrapper width="240px">
+        <ToggleElementFree isActive={view === ChartView.VOL} fontSize="12px" onClick={() => setView(ChartView.VOL)}>
+          Volume
+        </ToggleElementFree>
+        <ToggleElementFree
+          isActive={view === ChartView.DENSITY}
+          fontSize="12px"
+          onClick={() => setView(ChartView.DENSITY)}
+        >
+          Liquidity
+        </ToggleElementFree>
+        <ToggleElementFree isActive={view === ChartView.FEES} fontSize="12px" onClick={() => setView(ChartView.FEES)}>
+          Fees
+        </ToggleElementFree>
+      </ToggleWrapper>
+    )
+  }
+
   return (
     <PageWrapper>
       <ThemedBackground backgroundColor={backgroundColor} />
@@ -303,7 +323,7 @@ export default function PoolPage({
             )}
           </ResponsiveRow>
           <ContentLayout>
-            <DarkGreyCard>
+            <DarkBlackCard>
               <AutoColumn gap="lg">
                 <GreyCard padding="16px" noBorder>
                   <AutoColumn gap="md">
@@ -379,8 +399,8 @@ export default function PoolPage({
                   </RowFixed>
                 </RowBetween>
               </AutoColumn>
-            </DarkGreyCard>
-            <DarkGreyCard>
+            </DarkBlackCard>
+            <ChartCard>
               <ToggleRow align="flex-start">
                 <AutoColumn>
                   <TYPE.label fontSize="24px" height="30px">
@@ -398,30 +418,9 @@ export default function PoolPage({
                     {valueLabel ? <MonoSpace>{valueLabel}</MonoSpace> : ''}
                   </TYPE.main>
                 </AutoColumn>
-                <ToggleWrapper width="240px">
-                  <ToggleElementFree
-                    isActive={view === ChartView.VOL}
-                    fontSize="12px"
-                    onClick={() => (view === ChartView.VOL ? setView(ChartView.DENSITY) : setView(ChartView.VOL))}
-                  >
-                    Volume
-                  </ToggleElementFree>
-                  <ToggleElementFree
-                    isActive={view === ChartView.DENSITY}
-                    fontSize="12px"
-                    onClick={() => (view === ChartView.DENSITY ? setView(ChartView.VOL) : setView(ChartView.DENSITY))}
-                  >
-                    Liquidity
-                  </ToggleElementFree>
-                  <ToggleElementFree
-                    isActive={view === ChartView.FEES}
-                    fontSize="12px"
-                    onClick={() => (view === ChartView.FEES ? setView(ChartView.VOL) : setView(ChartView.FEES))}
-                  >
-                    Fees
-                  </ToggleElementFree>
-                </ToggleWrapper>
+                <ChartTypeSwitch />
               </ToggleRow>
+
               {view === ChartView.VOL ? (
                 <BarChart
                   data={formattedVolumeData}
@@ -445,7 +444,7 @@ export default function PoolPage({
               ) : (
                 <DensityChart address={address} />
               )}
-            </DarkGreyCard>
+            </ChartCard>
           </ContentLayout>
           <TYPE.main fontSize="24px">Transactions</TYPE.main>
           <DarkGreyCard>

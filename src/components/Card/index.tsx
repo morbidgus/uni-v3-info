@@ -25,8 +25,17 @@ export const GreyCard = styled(Card)<{ noBorder?: boolean }>`
   border: ${({ noBorder }) => (noBorder ? 'none' : '1px solid rgba(255, 255, 255, 0.1)')};
   backdrop-filter: blur(7.5px);
 `
+export const ChartCard = styled(Card)`
+  background-color: ${({ theme }) => theme.bg1};
+  border: 1px solid ${({ theme }) => theme.border1};
+  backdrop-filter: blur(20px);
+`
 
 export const DarkGreyCard = styled(Card)``
+
+export const DarkBlackCard = styled(Card)`
+  background: rgba(29, 27, 38, 0.2);
+`
 
 export const OutlineCard = styled(Card)`
   border: 1px solid ${({ theme }) => theme.bg3};
