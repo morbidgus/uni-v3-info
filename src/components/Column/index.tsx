@@ -14,6 +14,11 @@ export const ColumnStart = styled(Column)`
   width: 100%;
   align-items: flex-start;
 `
+export const ColumnEnd = styled(Column)`
+  width: 100%;
+  align-items: flex-end;
+  gap: 24px;
+`
 
 export const AutoColumn = styled.div<{
   gap?: 'sm' | 'md' | 'lg' | string

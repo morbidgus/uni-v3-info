@@ -213,6 +213,23 @@ const PaginationEllipsis = styled.span`
   background-color: #2b2940;
 `
 
+const FilterContainerSmall = styled.div`
+  width: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  display: flex;
+  `};
+`
+
+const FilterContainerBig = styled(RowFixed)`
+  display: flex;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  display: none;
+  `};
+`
+
 export default function TransactionTable({
   transactions,
   maxItems = 10,
@@ -306,8 +323,43 @@ export default function TransactionTable({
   return (
     <Wrapper>
       <AutoColumn>
+        <FilterContainerSmall>
+          <SortText
+            onClick={() => {
+              setTxFilter(undefined)
+            }}
+            active={txFilter === undefined}
+          >
+            All
+          </SortText>
+          <SortText
+            onClick={() => {
+              setTxFilter(TransactionType.SWAP)
+            }}
+            active={txFilter === TransactionType.SWAP}
+          >
+            Swaps
+          </SortText>
+          <SortText
+            onClick={() => {
+              setTxFilter(TransactionType.MINT)
+            }}
+            active={txFilter === TransactionType.MINT}
+          >
+            Adds
+          </SortText>
+          <SortText
+            onClick={() => {
+              setTxFilter(TransactionType.BURN)
+            }}
+            active={txFilter === TransactionType.BURN}
+          >
+            Removes
+          </SortText>
+        </FilterContainerSmall>
+
         <ResponsiveGrid>
-          <RowFixed>
+          <FilterContainerBig>
             <SortText
               onClick={() => {
                 setTxFilter(undefined)
@@ -340,7 +392,7 @@ export default function TransactionTable({
             >
               Removes
             </SortText>
-          </RowFixed>
+          </FilterContainerBig>
           <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.amountUSD)} end={1}>
             Total Value {arrow(SORT_FIELD.amountUSD)}
           </ClickableText>

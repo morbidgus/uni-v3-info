@@ -73,3 +73,30 @@ export function useTransformedTVLData(
     }
   }, [chartData, type])
 }
+
+export function useTransformedFeesData(
+  chartData: ChartDayData[] | PoolChartEntry[] | TokenChartEntry[] | undefined,
+  type: 'month' | 'week'
+) {
+  return useMemo(() => {
+    if (chartData) {
+      const data: Record<string, GenericChartEntry> = {}
+
+      chartData.forEach(({ date, feesUSD }: any) => {
+        const group = unixToType(date, type)
+        if (data[group]) {
+          data[group].value += feesUSD
+        } else {
+          data[group] = {
+            time: unixToDate(date),
+            value: feesUSD,
+          }
+        }
+      })
+
+      return Object.values(data)
+    } else {
+      return []
+    }
+  }, [chartData, type])
+}

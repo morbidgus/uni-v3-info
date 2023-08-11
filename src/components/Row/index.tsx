@@ -56,7 +56,7 @@ export const RowFixed = styled(Row)<{ gap?: string; justify?: string; gradientBg
   margin: ${({ gap }) => gap && `-${gap}`};
   align-items: center;
   background: ${({ gradientBg }) => gradientBg && gradientBg};
-  gap: ${({ gap }) => gap && gap};
+  gap: ${({ gap }) => (gap ? gap : '8px')};
 `
 
 export const ResponsiveRow = styled(RowBetween)`

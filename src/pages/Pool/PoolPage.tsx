@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useColor } from 'hooks/useColor'
 import { ThemedBackground, PageWrapper } from 'pages/styled'
 import { feeTierPercent, getEtherscanLink } from 'utils'
-import { AutoColumn, ColumnCenter, ColumnStart } from 'components/Column'
+import { AutoColumn, ColumnCenter, ColumnEnd, ColumnStart } from 'components/Column'
 import { RowBetween, RowFixed, AutoRow, RowFlat } from 'components/Row'
 import { TYPE, StyledInternalLink } from 'theme'
 import Loader, { LocalLoader } from 'components/Loader'
@@ -14,11 +14,11 @@ import useTheme from 'hooks/useTheme'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { formatDollarAmount, formatAmount } from 'utils/numbers'
 import Percent from 'components/Percent'
-import { ButtonPrimary, ButtonGray, SavedIcon } from 'components/Button'
+import { ButtonPrimary, ButtonGray, SavedIcon, SmallOptionButton } from 'components/Button'
 import { DarkGreyCard, GreyCard, GreyBadge, ChartCard, DarkBlackCard } from 'components/Card'
 import { usePoolDatas, usePoolChartData, usePoolTransactions } from 'state/pools/hooks'
 import { unixToDate } from 'utils/date'
-import { ToggleWrapper, ToggleElementFree } from 'components/Toggle/index'
+import { ToggleWrapper, ToggleElementFree, ToggleChartTypeElement } from 'components/Toggle/index'
 import BarChart from 'components/BarChart/alt'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import TransactionTable from 'components/TransactionsTable'
@@ -41,6 +41,10 @@ import ArrowDownIcon from '../../assets/svg/arrow-down.svg'
 import TVLLockIcon from '../../assets/svg/lock.svg'
 import EqualizerIcon from '../../assets/svg/equalizer.svg'
 import InsightsIcon from '../../assets/svg/insights.svg'
+import { VolumeWindow } from 'types'
+import { useTransformedFeesData, useTransformedVolumeData } from 'hooks/chart'
+import CalendarIcon from '../../assets/svg/calendar.svg'
+import FireIcon from '../../assets/svg/chronos-fire.svg'
 
 const ContentLayout = styled.div`
   display: grid;
@@ -71,6 +75,15 @@ const ResponsiveRow = styled(RowBetween)`
     row-gap: 24px;
     width: 100%:
   `};
+`
+
+const ResponsiveRowCenter = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  align-items: center;
+  row-gap: 24px;
+  width: 100%:
+`};
 `
 
 const ToggleRow = styled(RowBetween)`
@@ -114,6 +127,121 @@ const ChangeValue = styled.span<{ isNegative?: boolean }>`
   `};
 `
 
+const WindowSwitchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.bg2};
+  border-radius: 20px;
+  padding: 4px 8px;
+  gap: 10px;
+`
+
+const SwitchOption = styled.span<{ active?: boolean }>`
+  font-size: 14px;
+  background: ${({ active }) => (active ? 'linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%)' : 'none')};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: ${({ active }) => (active ? 'transparent' : '#FFFFFF')};
+  background-clip: text;
+  color: ${({ active }) => (active ? 'transparent' : '#FFFFFF')};
+`
+
+const InfoWrapper = styled.div`
+  display: flex;
+  position: relative;
+  border-radius: 20px;
+  background-color: ${({ theme }) => theme.bg1};
+  padding: 20px 32px;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+`
+
+const LeftAlignContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  justify-content: center;
+`
+
+const InfoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+`
+
+const InfoSeparator = styled.div`
+  height: 85%;
+  width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+`
+const TimeVolumeContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`
+
+const ChartTitle = styled.span`
+  font-size: 25px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+font-size: 14px;
+`};
+`
+
+const ChartSubTitle = styled.span`
+  font-size: 12px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+font-size: 10px;
+`};
+`
+
+const SymbolLabel = styled(TYPE.label)`
+  font-size: 30px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+font-size: 18px;
+`};
+`
+
+const InsightTypeSwitchContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 20px;
+  background: ${({ theme }) => theme.gd2};
+  gap: 12px;
+`
+
+const InsightTypeSwitchOption = styled.div<{ isActive?: boolean }>`
+  display: flex;
+  align-items: center;
+  background: ${({ theme, isActive }) => (isActive ? theme.gd1Hover : 'none')};
+  padding: 10px ${({ isActive }) => (isActive ? '30px' : '15px')};
+  border-radius: 20px;
+  gap: 10px;
+  cursor: pointer;
+`
+
+const PoolLayoutContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+`
+
+const TokensRow = styled.div`
+  display: flex;
+  gap: 8px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+flex-direction: column;
+align-items:center;
+justify-content: center;
+`}
+`
+
 enum ChartView {
   VOL,
   PRICE,
@@ -142,8 +270,15 @@ export default function PoolPage({
   const transactions = usePoolTransactions(address)
 
   const [view, setView] = useState(ChartView.VOL)
+  const [chartWindow, setChartWindow] = useState(VolumeWindow.weekly)
   const [latestValue, setLatestValue] = useState<number | undefined>()
+  const [chartHoverValue, setChartHoverValue] = useState<any>()
   const [valueLabel, setValueLabel] = useState<string | undefined>()
+
+  useEffect(() => {
+    setLatestValue(undefined)
+    setChartHoverValue(undefined)
+  }, [activeNetwork])
 
   const formattedTvlData = useMemo(() => {
     if (chartData) {
@@ -184,6 +319,22 @@ export default function PoolPage({
     }
   }, [chartData])
 
+  useEffect(() => {
+    if (latestValue) {
+      setChartHoverValue(formatDollarAmount(latestValue))
+    } else if (view === ChartView.VOL) {
+      setChartHoverValue(formatDollarAmount(formattedVolumeData[formattedVolumeData.length - 1]?.value))
+    } else if (view === ChartView.DENSITY) {
+      setChartHoverValue(formatDollarAmount(formattedTvlData[formattedTvlData.length - 1]?.value))
+    }
+  }, [latestValue])
+
+  const weeklyVolumeData = useTransformedVolumeData(chartData, 'week')
+  const monthlyVolumeData = useTransformedVolumeData(chartData, 'month')
+
+  const weeklyFeesData = useTransformedFeesData(chartData, 'week')
+  const monthlyFeesData = useTransformedFeesData(chartData, 'month')
+
   //watchlist
   const [savedPools, addSavedPool] = useSavedPools()
 
@@ -205,21 +356,82 @@ export default function PoolPage({
 
   const ChartTypeSwitch: React.FC<any> = () => {
     return (
-      <ToggleWrapper width="240px">
-        <ToggleElementFree isActive={view === ChartView.VOL} fontSize="12px" onClick={() => setView(ChartView.VOL)}>
+      <RowFixed>
+        <ToggleChartTypeElement
+          isActive={view === ChartView.VOL}
+          fontSize="14px"
+          onClick={() => setView(ChartView.VOL)}
+        >
           Volume
-        </ToggleElementFree>
-        <ToggleElementFree
+        </ToggleChartTypeElement>
+        <ToggleChartTypeElement
           isActive={view === ChartView.DENSITY}
-          fontSize="12px"
+          fontSize="14px"
           onClick={() => setView(ChartView.DENSITY)}
         >
           Liquidity
-        </ToggleElementFree>
-        <ToggleElementFree isActive={view === ChartView.FEES} fontSize="12px" onClick={() => setView(ChartView.FEES)}>
+        </ToggleChartTypeElement>
+        <ToggleChartTypeElement
+          isActive={view === ChartView.FEES}
+          fontSize="14px"
+          onClick={() => setView(ChartView.FEES)}
+        >
           Fees
-        </ToggleElementFree>
-      </ToggleWrapper>
+        </ToggleChartTypeElement>
+      </RowFixed>
+    )
+  }
+
+  const ChartWindowSwitch: React.FC<any> = () => {
+    return (
+      <WindowSwitchContainer>
+        <SmallOptionButton onClick={() => setChartWindow(VolumeWindow.daily)}>
+          <SwitchOption active={chartWindow === VolumeWindow.daily}>D</SwitchOption>
+        </SmallOptionButton>
+        <SmallOptionButton style={{ marginLeft: '8px' }} onClick={() => setChartWindow(VolumeWindow.weekly)}>
+          <SwitchOption active={chartWindow === VolumeWindow.weekly}>W</SwitchOption>
+        </SmallOptionButton>
+        <SmallOptionButton style={{ marginLeft: '8px' }} onClick={() => setChartWindow(VolumeWindow.monthly)}>
+          <SwitchOption active={chartWindow === VolumeWindow.monthly}>M</SwitchOption>
+        </SmallOptionButton>
+      </WindowSwitchContainer>
+    )
+  }
+
+  const ChartValue: React.FC<any> = () => {
+    return (
+      <InfoWrapper>
+        <InfoContainer>
+          <LeftAlignContainer>
+            <ChartTitle>Volume</ChartTitle>
+            <TYPE.subHeader fontSize="12px">24h Volume</TYPE.subHeader>
+          </LeftAlignContainer>
+        </InfoContainer>
+        <InfoSeparator />
+        <InfoContainer>
+          <LeftAlignContainer>
+            <ChartTitle>{chartHoverValue}</ChartTitle>
+            <TimeVolumeContainer>
+              <img width={'20px'} height={'20px'} src={CalendarIcon} alt="Calendar" />
+              <ChartSubTitle>{valueLabel ? <MonoSpace>{valueLabel}</MonoSpace> : 'All time'}</ChartSubTitle>
+            </TimeVolumeContainer>
+          </LeftAlignContainer>
+        </InfoContainer>
+      </InfoWrapper>
+    )
+  }
+
+  const InsightTypeSwitch: React.FC<any> = () => {
+    return (
+      <InsightTypeSwitchContainer>
+        <InsightTypeSwitchOption>
+          <img src={FireIcon} height="19px" width="19px" alt="gauge-icon" />
+          <TYPE.label fontSize="14px">Gauges</TYPE.label>
+        </InsightTypeSwitchOption>
+        <InsightTypeSwitchOption isActive>
+          <TYPE.label fontSize="14px">Pools</TYPE.label>
+        </InsightTypeSwitchOption>
+      </InsightTypeSwitchContainer>
     )
   }
 
@@ -242,8 +454,8 @@ export default function PoolPage({
               )} `}</TYPE.label>
             </AutoRow>
           </RowBetween>
-          <ResponsiveRow align="flex-end">
-            <AutoColumn gap="lg">
+          <PoolLayoutContainer>
+            <ResponsiveRowCenter>
               <RowFixed align="center">
                 <DoubleCurrencyLogo
                   address0={poolData.token0.address}
@@ -251,11 +463,7 @@ export default function PoolPage({
                   size={40}
                   margin
                 />
-                <TYPE.label
-                  ml="8px"
-                  mr="8px"
-                  fontSize="30px"
-                >{` ${poolData.token0.symbol} / ${poolData.token1.symbol} `}</TYPE.label>
+                <SymbolLabel>{` ${poolData.token0.symbol} / ${poolData.token1.symbol} `}</SymbolLabel>
                 <GreyBadge>{feeTierPercent(poolData.feeTier)}</GreyBadge>
                 {activeNetwork === EthereumNetworkInfo ? null : (
                   <GenericImageWrapper src={activeNetwork.imageURL} style={{ marginLeft: '8px' }} size={'40px'} />
@@ -272,8 +480,10 @@ export default function PoolPage({
                   <img src={OpenNewTabIcon} height="23px" width="23px" alt="open in new tab" />
                 </StyledExternalLink>
               </RowFixed>
-
-              <ResponsiveRow>
+              <InsightTypeSwitch />
+            </ResponsiveRowCenter>
+            <ResponsiveRowCenter>
+              <TokensRow>
                 <StyledInternalLink to={networkPrefix(activeNetwork) + 'tokens/' + poolData.token0.address}>
                   <TokenButton>
                     <RowFixed>
@@ -298,30 +508,30 @@ export default function PoolPage({
                     </RowFixed>
                   </TokenButton>
                 </StyledInternalLink>
-              </ResponsiveRow>
-            </AutoColumn>
-            {activeNetwork !== EthereumNetworkInfo ? null : (
-              <RowFixed>
-                <StyledExternalLink
-                  href={`https://app.uniswap.org/#/add/${poolData.token0.address}/${poolData.token1.address}/${poolData.feeTier}`}
-                >
-                  <ButtonGray mr="12px">
-                    <div style={{ display: 'flex', alignItems: 'center' }}>Add Liquidity</div>
-                    <img src={DownloadIcon} height={20} width={20} alt="add" />
-                  </ButtonGray>
-                </StyledExternalLink>
-                <StyledExternalLink
-                  href={`https://app.uniswap.org/#/swap?inputCurrency=${poolData.token0.address}&outputCurrency=${poolData.token1.address}`}
-                >
-                  <ButtonPrimary>
-                    <TYPE.label fontSize="14px">Trade</TYPE.label>
+              </TokensRow>
+              {activeNetwork !== EthereumNetworkInfo ? null : (
+                <RowFixed>
+                  <StyledExternalLink
+                    href={`https://app.uniswap.org/#/add/${poolData.token0.address}/${poolData.token1.address}/${poolData.feeTier}`}
+                  >
+                    <ButtonGray mr="12px">
+                      <div style={{ display: 'flex', alignItems: 'center' }}>Add Liquidity</div>
+                      <img src={DownloadIcon} height={20} width={20} alt="add" />
+                    </ButtonGray>
+                  </StyledExternalLink>
+                  <StyledExternalLink
+                    href={`https://app.uniswap.org/#/swap?inputCurrency=${poolData.token0.address}&outputCurrency=${poolData.token1.address}`}
+                  >
+                    <ButtonPrimary>
+                      <TYPE.label fontSize="14px">Trade</TYPE.label>
 
-                    <img src={ArrowRightIcon} height={20} width={20} alt="arrow" />
-                  </ButtonPrimary>
-                </StyledExternalLink>
-              </RowFixed>
-            )}
-          </ResponsiveRow>
+                      <img src={ArrowRightIcon} height={20} width={20} alt="arrow" />
+                    </ButtonPrimary>
+                  </StyledExternalLink>
+                </RowFixed>
+              )}
+            </ResponsiveRowCenter>
+          </PoolLayoutContainer>
           <ContentLayout>
             <DarkBlackCard>
               <AutoColumn gap="lg">
@@ -401,29 +611,24 @@ export default function PoolPage({
               </AutoColumn>
             </DarkBlackCard>
             <ChartCard>
-              <ToggleRow align="flex-start">
-                <AutoColumn>
-                  <TYPE.label fontSize="24px" height="30px">
-                    <MonoSpace>
-                      {latestValue
-                        ? formatDollarAmount(latestValue)
-                        : view === ChartView.VOL
-                        ? formatDollarAmount(formattedVolumeData[formattedVolumeData.length - 1]?.value)
-                        : view === ChartView.DENSITY
-                        ? ''
-                        : formatDollarAmount(formattedTvlData[formattedTvlData.length - 1]?.value)}{' '}
-                    </MonoSpace>
-                  </TYPE.label>
-                  <TYPE.main height="20px" fontSize="12px">
-                    {valueLabel ? <MonoSpace>{valueLabel}</MonoSpace> : ''}
-                  </TYPE.main>
-                </AutoColumn>
-                <ChartTypeSwitch />
+              <ToggleRow align="flex-start" padding={'14px'}>
+                <ChartValue />
+                <ColumnEnd>
+                  <ChartTypeSwitch />
+                  {view !== ChartView.DENSITY && <ChartWindowSwitch />}
+                </ColumnEnd>
               </ToggleRow>
 
               {view === ChartView.VOL ? (
                 <BarChart
-                  data={formattedVolumeData}
+                  data={
+                    chartWindow === VolumeWindow.monthly
+                      ? monthlyVolumeData
+                      : chartWindow === VolumeWindow.weekly
+                      ? weeklyVolumeData
+                      : formattedVolumeData
+                  }
+                  activeWindow={chartWindow}
                   color={backgroundColor}
                   minHeight={340}
                   setValue={setLatestValue}
@@ -433,7 +638,14 @@ export default function PoolPage({
                 />
               ) : view === ChartView.FEES ? (
                 <BarChart
-                  data={formattedFeesUSD}
+                  data={
+                    chartWindow === VolumeWindow.monthly
+                      ? monthlyFeesData
+                      : chartWindow === VolumeWindow.weekly
+                      ? weeklyFeesData
+                      : formattedFeesUSD
+                  }
+                  activeWindow={chartWindow}
                   color={backgroundColor}
                   minHeight={340}
                   setValue={setLatestValue}
