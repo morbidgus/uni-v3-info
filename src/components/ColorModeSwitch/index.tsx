@@ -11,7 +11,7 @@ const SwitchWrapper = styled.svg`
   }
 
   #night {
-    fill: white;
+    fill: ${({ theme }) => theme.text1};
   }
 
   #light {
@@ -23,7 +23,7 @@ const SwitchWrapper = styled.svg`
   }
 
   &.active #light {
-    fill: white;
+    fill: ${({ theme }) => theme.text1};
   }
 `
 

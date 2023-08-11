@@ -12,7 +12,7 @@ const StyledPolling = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   margin-right: 1rem;
   border-radius: 20px;
   width: 220px;

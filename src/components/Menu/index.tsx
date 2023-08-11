@@ -66,7 +66,7 @@ const MenuItem = styled(ExternalLink)`
   justify-content: center;
   flex: 1;
   padding: 0.5rem 0.5rem;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   border-radius: 20px;
   font-size: 14px;
   background: #3b3852;

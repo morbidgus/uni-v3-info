@@ -19,8 +19,10 @@ const Row = styled(Box)<{
   border-radius: ${({ borderRadius }) => borderRadius};
 `
 
-export const RowBetween = styled(Row)`
+export const RowBetween = styled(Row)<{ gradientBg?: string }>`
   justify-content: space-between;
+  background: ${({ gradientBg }) => gradientBg && gradientBg};
+  border-radius: 20px;
 `
 
 export const SearchRow = styled(Row)`
@@ -49,10 +51,12 @@ export const AutoRow = styled(Row)<{ gap?: string; justify?: string }>`
   }
 `
 
-export const RowFixed = styled(Row)<{ gap?: string; justify?: string }>`
+export const RowFixed = styled(Row)<{ gap?: string; justify?: string; gradientBg?: string }>`
   width: fit-content;
   margin: ${({ gap }) => gap && `-${gap}`};
   align-items: center;
+  background: ${({ gradientBg }) => gradientBg && gradientBg};
+  gap: ${({ gap }) => gap && gap};
 `
 
 export const ResponsiveRow = styled(RowBetween)`

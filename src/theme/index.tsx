@@ -8,6 +8,7 @@ import styled, {
 import { useIsDarkMode } from '../state/user/hooks'
 import { Text, TextProps } from 'rebass'
 import { Colors } from './styled'
+import TTFirsNeueTrialVarRoman from '../assets/fonts/ttfont_roman.ttf'
 
 export * from './components'
 
@@ -17,6 +18,15 @@ export const MEDIA_WIDTHS = {
   upToMedium: 960,
   upToLarge: 1280,
 }
+
+const FontFace = createGlobalStyle`
+  @font-face {
+    font-family: 'TT-Firs-Neue';
+    src: url(${TTFirsNeueTrialVarRoman}) format('truetype');
+    font-style: normal;
+    font-display: auto;
+  }
+`
 
 const mediaWidthTemplates: { [width in keyof typeof MEDIA_WIDTHS]: typeof css } = Object.keys(MEDIA_WIDTHS).reduce(
   (accumulator, size) => {
@@ -48,11 +58,16 @@ export function colors(darkMode: boolean): Colors {
 
     // backgrounds / greys
     bg0: darkMode ? '#191B1F' : '#F7F8FA',
-    bg1: darkMode ? '#1F2128' : '#FFFFFF',
-    bg2: darkMode ? '#2C2F36' : '#F7F8FA',
+    bg1: darkMode ? 'rgba(53, 49, 71, 0.53)' : '#FFFFFF',
+    bg2: darkMode ? '#36314e' : '#F7F8FA',
     bg3: darkMode ? '#40444F' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
+    bgWhiteOpacity: darkMode ? 'rgba(255,255,255,0.1)' : '#F7F8FA',
+
+    // boders
+
+    border1: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
 
     //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
@@ -74,20 +89,22 @@ export function colors(darkMode: boolean): Colors {
     secondary3: darkMode ? '#17000b26' : '#FDEAF1',
 
     // other
+    green1: '#27F291',
+    red1: '#FF2A5F',
     pink1: '#ff007a',
-    red1: '#FD4040',
     red2: '#F82D3A',
     red3: '#D60000',
-    green1: '#27AE60',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
     yellow3: '#F3B71E',
     blue1: '#2172E5',
     blue2: '#5199FF',
 
-    // dont wanna forget these blue yet
-    // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
-    // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
+    // Gradients
+
+    gd1: 'linear-gradient(67.55deg, #3F4AB3 4.5%, #7A64D0 95.77%)',
+    gd1Hover: 'linear-gradient(67.55deg, #6D78E4 4.5%, #7A64D0 95.77%)',
+    gd2: 'linear-gradient(67.55deg, rgba(63, 74, 179, 0.2) 4.5%, rgba(122, 100, 208, 0.2) 95.77%)',
   }
 }
 
@@ -124,34 +141,39 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 
   const themeObject = useMemo(() => theme(darkMode), [darkMode])
 
-  return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>
+  return (
+    <StyledComponentsThemeProvider theme={themeObject}>
+      <FontFace />
+      {children}
+    </StyledComponentsThemeProvider>
+  )
 }
 
 const TextWrapper = styled(Text)<{ color: keyof Colors }>`
-  color: ${({ color, theme }) => (theme as any)[color]};
+  color: ${({ color, theme }) => theme.text1};
 `
 
 export const TYPE = {
   main(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text2'} {...props} />
+    return <TextWrapper fontWeight={400} color={'text2'} {...props} />
   },
   link(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'primary1'} {...props} />
+    return <TextWrapper fontWeight={400} color={'primary1'} {...props} />
   },
   label(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text1'} {...props} />
+    return <TextWrapper fontWeight={400} color={'text1'} {...props} />
   },
   black(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text1'} {...props} />
+    return <TextWrapper fontWeight={400} color={'text1'} {...props} />
   },
   white(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'white'} {...props} />
+    return <TextWrapper fontWeight={400} color={'white'} {...props} />
   },
   body(props: TextProps) {
     return <TextWrapper fontWeight={400} fontSize={16} color={'text1'} {...props} />
   },
   largeHeader(props: TextProps) {
-    return <TextWrapper fontWeight={600} fontSize={24} color={'text1'} {...props} />
+    return <TextWrapper fontWeight={500} fontSize={24} color={'text1'} {...props} />
   },
   mediumHeader(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={20} color={'text3'} {...props} />
@@ -160,36 +182,36 @@ export const TYPE = {
     return <TextWrapper fontWeight={400} fontSize={14} {...props} />
   },
   small(props: TextProps) {
-    return <TextWrapper fontWeight={500} fontSize={11} {...props} />
+    return <TextWrapper fontWeight={400} fontSize={11} {...props} />
   },
   blue(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'blue1'} {...props} />
+    return <TextWrapper fontWeight={400} color={'blue1'} {...props} />
   },
   yellow(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'yellow3'} {...props} />
+    return <TextWrapper fontWeight={400} color={'yellow3'} {...props} />
   },
   darkGray(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text3'} {...props} />
+    return <TextWrapper fontWeight={400} color={'text3'} {...props} />
   },
   gray(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'bg3'} {...props} />
+    return <TextWrapper fontWeight={400} color={'bg3'} {...props} />
   },
   italic(props: TextProps) {
-    return <TextWrapper fontWeight={500} fontSize={12} fontStyle={'italic'} color={'text2'} {...props} />
+    return <TextWrapper fontWeight={400} fontSize={12} fontStyle={'italic'} color={'text2'} {...props} />
   },
   error({ error, ...props }: { error: boolean } & TextProps) {
-    return <TextWrapper fontWeight={500} color={error ? 'red1' : 'text2'} {...props} />
+    return <TextWrapper fontWeight={400} color={error ? 'red1' : 'text2'} {...props} />
   },
 }
 
 export const FixedGlobalStyle = createGlobalStyle`
 html, input, textarea, button {
-  font-family: 'Inter', sans-serif;
+  font-family: 'TT-Firs-Neue';
   font-display: fallback;
 }
 @supports (font-variation-settings: normal) {
   html, input, textarea, button {
-    font-family: 'Inter var', sans-serif;
+    font-family: 'TT-Firs-Neue';
   }
 }
 
@@ -234,7 +256,7 @@ html {
 	position: absolute;
 	padding: 8px;
 	font-size: 12px;
-	color: white;
+	color: ${({ theme }) => theme.text1};
 	background-color: transparent;
 	text-align: left;
 	z-index: 10;

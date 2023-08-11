@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { useColor } from 'hooks/useColor'
 import { ThemedBackground, PageWrapper } from 'pages/styled'
 import { feeTierPercent, getEtherscanLink } from 'utils'
-import { AutoColumn } from 'components/Column'
-import { RowBetween, RowFixed, AutoRow } from 'components/Row'
+import { AutoColumn, ColumnCenter, ColumnStart } from 'components/Column'
+import { RowBetween, RowFixed, AutoRow, RowFlat } from 'components/Row'
 import { TYPE, StyledInternalLink } from 'theme'
 import Loader, { LocalLoader } from 'components/Loader'
 import { ExternalLink, Download } from 'react-feather'
@@ -33,6 +33,14 @@ import FavoriteFilledIcon from '../../assets/svg/favorite-star-filled.svg'
 import FavoriteIcon from '../../assets/svg/favorite-star.svg'
 import OpenNewTabIcon from '../../assets/svg/open-new-tab.svg'
 import ArrowRightIcon from '../../assets/svg/arrow-right.svg'
+import DownloadIcon from '../../assets/svg/download.svg'
+import LockIcon from '../../assets/svg/lock-icon.svg'
+import Row from 'components/Row'
+import ArrowUpIcon from '../../assets/svg/arrow-up.svg'
+import ArrowDownIcon from '../../assets/svg/arrow-down.svg'
+import TVLLockIcon from '../../assets/svg/lock.svg'
+import EqualizerIcon from '../../assets/svg/equalizer.svg'
+import InsightsIcon from '../../assets/svg/insights.svg'
 
 const ContentLayout = styled.div`
   display: grid;
@@ -76,6 +84,34 @@ const FavoriteWrapper = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  margin: 0 14px;
+`
+
+const TTLContainer = styled(Row)`
+  gap: 8px;
+`
+
+const LabelContainer = styled.div`
+  background-color: ${({ theme }) => theme.bgWhiteOpacity};
+  border-radius: 20px;
+  padding: 0 8px;
+`
+
+const InfoValueChange = styled.div<{ isNegative?: boolean }>`
+  display: flex;
+  align-items: center;
+  border: 1px solid ${({ isNegative }) => (isNegative ? '#FF2A5F' : '#27F291')}
+  border-radius: 20px;
+  padding: 5px 10px;
+`
+
+const ChangeValue = styled.span<{ isNegative?: boolean }>`
+  color: ${({ isNegative }) => (isNegative ? '#FF2A5F' : '#27F291')};
+  font-size: 12px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  font-size: 10px;
+  `};
 `
 
 enum ChartView {
@@ -151,6 +187,22 @@ export default function PoolPage({
   //watchlist
   const [savedPools, addSavedPool] = useSavedPools()
 
+  const PercentageChageElement: React.FC<any> = ({ percentageChange }: any) => {
+    const truncated = parseFloat(percentageChange?.toFixed(2))
+
+    return (
+      <InfoValueChange isNegative={truncated < 0}>
+        {truncated > 0 ? (
+          <img width="17px" height="17px" alt="arrow" src={ArrowUpIcon} />
+        ) : (
+          <img width="17px" height="17px" alt="arrow" src={ArrowDownIcon} />
+        )}
+
+        <ChangeValue isNegative={truncated < 0}>{Math.abs(percentageChange).toFixed(2)}%</ChangeValue>
+      </InfoValueChange>
+    )
+  }
+
   return (
     <PageWrapper>
       <ThemedBackground backgroundColor={backgroundColor} />
@@ -206,7 +258,7 @@ export default function PoolPage({
                   <TokenButton>
                     <RowFixed>
                       <CurrencyLogo address={poolData.token0.address} size={'20px'} />
-                      <TYPE.label fontSize="16px" ml="4px" style={{ whiteSpace: 'nowrap' }} width={'fit-content'}>
+                      <TYPE.label fontSize="14px" ml="8px" style={{ whiteSpace: 'nowrap' }} width={'fit-content'}>
                         {`1 ${poolData.token0.symbol} =  ${formatAmount(poolData.token1Price, 4)} ${
                           poolData.token1.symbol
                         }`}
@@ -215,10 +267,10 @@ export default function PoolPage({
                   </TokenButton>
                 </StyledInternalLink>
                 <StyledInternalLink to={networkPrefix(activeNetwork) + 'tokens/' + poolData.token1.address}>
-                  <TokenButton ml="10px">
+                  <TokenButton>
                     <RowFixed>
                       <CurrencyLogo address={poolData.token1.address} size={'20px'} />
-                      <TYPE.label fontSize="16px" ml="4px" style={{ whiteSpace: 'nowrap' }} width={'fit-content'}>
+                      <TYPE.label fontSize="14px" ml="8px" style={{ whiteSpace: 'nowrap' }} width={'fit-content'}>
                         {`1 ${poolData.token1.symbol} =  ${formatAmount(poolData.token0Price, 4)} ${
                           poolData.token0.symbol
                         }`}
@@ -233,18 +285,17 @@ export default function PoolPage({
                 <StyledExternalLink
                   href={`https://app.uniswap.org/#/add/${poolData.token0.address}/${poolData.token1.address}/${poolData.feeTier}`}
                 >
-                  <ButtonGray width="170px" mr="12px" style={{ height: '44px' }}>
-                    <RowBetween>
-                      <Download size={24} />
-                      <div style={{ display: 'flex', alignItems: 'center' }}>Add Liquidity</div>
-                    </RowBetween>
+                  <ButtonGray mr="12px">
+                    <div style={{ display: 'flex', alignItems: 'center' }}>Add Liquidity</div>
+                    <img src={DownloadIcon} height={20} width={20} alt="add" />
                   </ButtonGray>
                 </StyledExternalLink>
                 <StyledExternalLink
                   href={`https://app.uniswap.org/#/swap?inputCurrency=${poolData.token0.address}&outputCurrency=${poolData.token1.address}`}
                 >
                   <ButtonPrimary>
-                    Trade
+                    <TYPE.label fontSize="14px">Trade</TYPE.label>
+
                     <img src={ArrowRightIcon} height={20} width={20} alt="arrow" />
                   </ButtonPrimary>
                 </StyledExternalLink>
@@ -254,45 +305,79 @@ export default function PoolPage({
           <ContentLayout>
             <DarkGreyCard>
               <AutoColumn gap="lg">
-                <GreyCard padding="16px">
+                <GreyCard padding="16px" noBorder>
                   <AutoColumn gap="md">
-                    <TYPE.main>Total Tokens Locked</TYPE.main>
-                    <RowBetween>
-                      <RowFixed>
-                        <CurrencyLogo address={poolData.token0.address} size={'20px'} />
-                        <TYPE.label fontSize="14px" ml="8px">
-                          {poolData.token0.symbol}
-                        </TYPE.label>
+                    <TTLContainer>
+                      <img src={LockIcon} height={23} width={23} alt="lock" />
+                      <TYPE.main>Total Tokens Locked</TYPE.main>
+                    </TTLContainer>
+                    <RowBetween gradientBg={theme.gd2} padding={'14px'}>
+                      <RowFixed gap="8px">
+                        <CurrencyLogo address={poolData.token0.address} size={'36px'} />
+                        <ColumnStart>
+                          <TYPE.label fontSize="14px">{poolData.token0.symbol}</TYPE.label>
+                          <LabelContainer>
+                            <TYPE.label fontSize="11px">{poolData.token0.name}</TYPE.label>
+                          </LabelContainer>
+                        </ColumnStart>
                       </RowFixed>
-                      <TYPE.label fontSize="14px">{formatAmount(poolData.tvlToken0)}</TYPE.label>
+                      <TYPE.label fontSize="20px">{formatAmount(poolData.tvlToken0)}</TYPE.label>
                     </RowBetween>
-                    <RowBetween>
-                      <RowFixed>
-                        <CurrencyLogo address={poolData.token1.address} size={'20px'} />
-                        <TYPE.label fontSize="14px" ml="8px">
-                          {poolData.token1.symbol}
-                        </TYPE.label>
+                    <RowBetween gradientBg={theme.gd2} padding={'14px'}>
+                      <RowFixed gap="8px">
+                        <CurrencyLogo address={poolData.token1.address} size={'36px'} />
+                        <ColumnStart>
+                          <TYPE.label fontSize="14px">{poolData.token1.symbol}</TYPE.label>
+                          <LabelContainer>
+                            <TYPE.label fontSize="11px">{poolData.token1.name}</TYPE.label>
+                          </LabelContainer>
+                        </ColumnStart>
                       </RowFixed>
-                      <TYPE.label fontSize="14px">{formatAmount(poolData.tvlToken1)}</TYPE.label>
+                      <TYPE.label fontSize="20px">{formatAmount(poolData.tvlToken1)}</TYPE.label>
                     </RowBetween>
                   </AutoColumn>
                 </GreyCard>
-                <AutoColumn gap="4px">
-                  <TYPE.main fontWeight={400}>TVL</TYPE.main>
-                  <TYPE.label fontSize="24px">{formatDollarAmount(poolData.tvlUSD)}</TYPE.label>
-                  <Percent value={poolData.tvlUSDChange} />
-                </AutoColumn>
-                <AutoColumn gap="4px">
-                  <TYPE.main fontWeight={400}>Volume 24h</TYPE.main>
-                  <TYPE.label fontSize="24px">{formatDollarAmount(poolData.volumeUSD)}</TYPE.label>
-                  <Percent value={poolData.volumeUSDChange} />
-                </AutoColumn>
-                <AutoColumn gap="4px">
-                  <TYPE.main fontWeight={400}>24h Fees</TYPE.main>
-                  <TYPE.label fontSize="24px">
-                    {formatDollarAmount(poolData.volumeUSD * (poolData.feeTier / 1000000))}
-                  </TYPE.label>
-                </AutoColumn>
+                <RowBetween border={`1px solid ${theme.border1}`} align="center" padding={'14px'}>
+                  <RowFixed>
+                    <img src={TVLLockIcon} height={35} width={35} alt="TVLLock" />
+                    <ColumnStart>
+                      <TYPE.main fontWeight={400} fontSize="14px">
+                        TVL
+                      </TYPE.main>
+                      <TYPE.label fontSize="18px">{formatDollarAmount(poolData.tvlUSD)}</TYPE.label>
+                    </ColumnStart>
+                  </RowFixed>
+
+                  <PercentageChageElement percentageChange={poolData.tvlUSDChange} />
+                </RowBetween>
+
+                <RowBetween border={`1px solid ${theme.border1}`} align="center" padding={'14px'}>
+                  <RowFixed>
+                    <img src={EqualizerIcon} height={35} width={35} alt="TVLLock" />
+                    <ColumnStart>
+                      <TYPE.main fontWeight={400} fontSize="14px">
+                        24h Volume
+                      </TYPE.main>
+                      <TYPE.label fontSize="18px">{formatDollarAmount(poolData.volumeUSD)}</TYPE.label>
+                    </ColumnStart>
+                  </RowFixed>
+
+                  <PercentageChageElement percentageChange={poolData.volumeUSDChange} />
+                </RowBetween>
+
+                <RowBetween border={`1px solid ${theme.border1}`} align="center" padding={'14px'}>
+                  <RowFixed>
+                    <img src={InsightsIcon} height={35} width={35} alt="TVLLock" />
+                    <ColumnStart>
+                      <TYPE.main fontWeight={400} fontSize="14px">
+                        24h Fees
+                      </TYPE.main>
+                      <TYPE.label fontSize="18px">
+                        {formatDollarAmount(poolData.volumeUSD * (poolData.feeTier / 1000000))}
+                      </TYPE.label>
+                    </ColumnStart>
+                  </RowFixed>
+                </RowBetween>
               </AutoColumn>
             </DarkGreyCard>
             <DarkGreyCard>

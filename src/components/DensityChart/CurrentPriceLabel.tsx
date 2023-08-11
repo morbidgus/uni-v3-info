@@ -10,7 +10,7 @@ import { TYPE } from 'theme'
 const Wrapper = styled.div`
   border-radius: 8px;
   padding: 6px 12px;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   width: fit-content;
   font-size: 14px;
   background-color: ${({ theme }) => theme.bg2};

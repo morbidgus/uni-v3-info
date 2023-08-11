@@ -160,7 +160,7 @@ const OptionButton = styled.div<{ isSearch?: boolean }>`
   gap: 10px;
   background: ${({ isSearch }) =>
     isSearch ? 'linear-gradient(67.55deg, #3F4AB3 4.5%, #7A64D0 95.77%)' : 'rgba(255,255,255, 0.1)'};
-  color: white;
+  color: ${({ theme }) => theme.text1};
   :hover {
     opacity: 0.6;
     cursor: pointer;

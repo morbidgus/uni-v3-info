@@ -20,9 +20,10 @@ export const LightGreyCard = styled(Card)`
   background-color: ${({ theme }) => theme.bg3};
 `
 
-export const GreyCard = styled(Card)`
-  background-color: #2e293f;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+export const GreyCard = styled(Card)<{ noBorder?: boolean }>`
+  background: ${({ theme }) => theme.gd2};
+  border: ${({ noBorder }) => (noBorder ? 'none' : '1px solid rgba(255, 255, 255, 0.1)')};
+  backdrop-filter: blur(7.5px);
 `
 
 export const DarkGreyCard = styled(Card)``

@@ -59,7 +59,7 @@ const InfoWrapper = styled.div`
   display: flex;
   position: relative;
   border-radius: 20px;
-  background-color: rgba(53, 49, 71, 0.53);
+  background-color: ${({ theme }) => theme.bg1};
   padding: 12px 32px;
   height: 100%;
   justify-content: center;
@@ -96,7 +96,7 @@ const WindowSwitchContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #36314e;
+  background-color: ${({ theme }) => theme.bg2};
   border-radius: 20px;
 `
 
@@ -114,8 +114,8 @@ const ContentContainer = styled.div`
   align-items: center;
   border-radius: 20px;
   flex: 1;
-  background-color: #36314e;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: ${({ theme }) => theme.bg2};
+  border: 1px solid ${({ theme }) => theme.border1};
 `
 
 const IconContainer = styled.div`
@@ -230,7 +230,7 @@ const ExploreIconContainer = styled.div`
 
 const LinkContent = styled.span`
   z-index: 2;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   font-weight: 500;
   font-size: 14px;
 `

@@ -91,7 +91,7 @@ const WarningWrapper = styled.div`
 const WarningBanner = styled.div`
   background-color: ${({ theme }) => theme.bg3};
   padding: 1rem;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   font-size: 14px;
   width: 100%;
   text-align: center;

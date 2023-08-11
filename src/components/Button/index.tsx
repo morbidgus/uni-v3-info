@@ -21,7 +21,7 @@ const Base = styled(RebassButton)<{
   border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
   outline: none;
   border: none;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   text-decoration: none;
   display: flex;
   justify-content: center;
@@ -40,18 +40,20 @@ const Base = styled(RebassButton)<{
 `
 
 export const ButtonPrimary = styled(Base)<{ bgColor?: string }>`
-  background: linear-gradient(67.55deg, #6d78e4 4.5%, #7a64d0 95.77%);
-  padding: 10px 20px;
+  gap: 8px;
+  font-size: 14px;
+  background: ${({ theme }) => theme.gd1Hover};
+  padding: 10px 40px;
 
-  color: white;
+  color: ${({ theme }) => theme.text1};
   &:focus {
-    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
+    background: ${({ theme }) => theme.gd1};
   }
   &:hover {
-    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
+    background: ${({ theme }) => theme.gd1};
   }
   &:active {
-    background: linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%);
+    background: ${({ theme }) => theme.gd1};
   }
   &:disabled {
     background-color: ${({ theme, altDisabledStyle, disabled }) =>
@@ -62,7 +64,6 @@ export const ButtonPrimary = styled(Base)<{ bgColor?: string }>`
     box-shadow: none;
     border: none;
     outline: none;
-    opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
   }
 `
 
@@ -95,22 +96,21 @@ export const ButtonLight = styled(Base)`
 `
 
 export const ButtonGray = styled(Base)`
-  background-color: ${({ theme }) => theme.bg3};
-  color: ${({ theme }) => theme.text2};fgcfxfx
-  font-size: 16px;
+  background-color: #3b3855;
+  color: ${({ theme }) => theme.text1};
+  font-size: 14px;
   font-weight: 500;
   outline: none;
+  padding: 10px 20px;
+  gap: 8px;
   &:focus {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
-    outline: none;
+    background: ${({ theme }) => theme.gd1};
   }
   &:hover {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
-    outline: none;
+    background: ${({ theme }) => theme.gd1};
   }
   &:active {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.1, theme.bg4)};
-    outline: none;
+    background: ${({ theme }) => theme.gd1};
   }
 `
 
@@ -144,7 +144,7 @@ export const ButtonSecondary = styled(Base)`
 
 export const ButtonPink = styled(Base)`
   background-color: ${({ theme }) => theme.primary1};
-  color: white;
+  color: ${({ theme }) => theme.text1};
 
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
@@ -165,7 +165,7 @@ export const ButtonPink = styled(Base)`
 `
 
 export const ButtonUNIGradient = styled(ButtonPrimary)`
-  color: white;
+  color: ${({ theme }) => theme.text1};
   padding: 4px 8px;
   height: 36px;
   font-weight: 500;

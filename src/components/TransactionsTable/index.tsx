@@ -84,7 +84,7 @@ const SortText = styled.div<{ active?: boolean }>`
   font-weight: 400;
   background: ${({ active }) => (active ? 'linear-gradient(67.55deg, #3f4ab3 4.5%, #7a64d0 95.77%)' : '#2b2940')};
   font-size: 12px;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   margin-right: 10px;
 
   :hover {
