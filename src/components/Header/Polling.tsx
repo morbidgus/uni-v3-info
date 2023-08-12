@@ -36,7 +36,6 @@ const StyledPollingDot = styled.div`
   min-width: 8px;
   margin-right: 0.4rem;
   margin-left: 0.4rem;
-  margin-top: 3px;
   border-radius: 50%;
   position: relative;
   background-color: ${({ theme }) => theme.green1};

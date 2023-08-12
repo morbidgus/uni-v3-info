@@ -74,6 +74,33 @@ export function useTransformedTVLData(
   }, [chartData, type])
 }
 
+export function useTransformedTotalValueLockedUSDData(
+  chartData: ChartDayData[] | PoolChartEntry[] | TokenChartEntry[] | undefined,
+  type: 'month' | 'week'
+) {
+  return useMemo(() => {
+    if (chartData) {
+      const data: Record<string, GenericChartEntry> = {}
+
+      chartData.forEach(({ date, totalValueLockedUSD }: any) => {
+        const group = unixToType(date, type)
+        if (data[group]) {
+          data[group].value += totalValueLockedUSD
+        } else {
+          data[group] = {
+            time: unixToDate(date),
+            value: totalValueLockedUSD,
+          }
+        }
+      })
+
+      return Object.values(data)
+    } else {
+      return []
+    }
+  }, [chartData, type])
+}
+
 export function useTransformedFeesData(
   chartData: ChartDayData[] | PoolChartEntry[] | TokenChartEntry[] | undefined,
   type: 'month' | 'week'
@@ -90,6 +117,33 @@ export function useTransformedFeesData(
           data[group] = {
             time: unixToDate(date),
             value: feesUSD,
+          }
+        }
+      })
+
+      return Object.values(data)
+    } else {
+      return []
+    }
+  }, [chartData, type])
+}
+
+export function useTransformedPriceData(
+  chartData: ChartDayData[] | PoolChartEntry[] | TokenChartEntry[] | undefined,
+  type: 'month' | 'week'
+) {
+  return useMemo(() => {
+    if (chartData) {
+      const data: Record<string, GenericChartEntry> = {}
+
+      chartData.forEach(({ date, priceUSD }: any) => {
+        const group = unixToType(date, type)
+        if (data[group]) {
+          data[group].value += priceUSD
+        } else {
+          data[group] = {
+            time: unixToDate(date),
+            value: priceUSD,
           }
         }
       })

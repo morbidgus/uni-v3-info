@@ -13,7 +13,6 @@ const Wrapper = styled(Card)`
   width: 100%;
   padding: 1rem;
   display: flex;
-  background-color: ${({ theme }) => theme.bg0}
   flex-direction: column;
   > * {
     font-size: 1rem;
@@ -80,7 +79,6 @@ const CandleChart = ({
         layout: {
           backgroundColor: 'transparent',
           textColor: '#565A69',
-          fontFamily: 'Inter var',
         },
         rightPriceScale: {
           scaleMargins: {

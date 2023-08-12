@@ -242,6 +242,12 @@ justify-content: center;
 `}
 `
 
+const BreadCrumbsContainer = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+margin-top: 60px;
+`}
+`
+
 enum ChartView {
   VOL,
   PRICE,
@@ -398,13 +404,35 @@ export default function PoolPage({
     )
   }
 
+  const getChartTitle = (): string => {
+    switch (view) {
+      case ChartView.VOL:
+        return 'Volume'
+      case ChartView.FEES:
+        return 'Fees'
+      default:
+        return 'Liquidity'
+    }
+  }
+
+  const getChartSubtitle = (): string => {
+    switch (view) {
+      case ChartView.VOL:
+        return '24hs Volume'
+      case ChartView.FEES:
+        return 'Total Fees'
+      default:
+        return 'Total Density'
+    }
+  }
+
   const ChartValue: React.FC<any> = () => {
     return (
       <InfoWrapper>
         <InfoContainer>
           <LeftAlignContainer>
-            <ChartTitle>Volume</ChartTitle>
-            <TYPE.subHeader fontSize="12px">24h Volume</TYPE.subHeader>
+            <ChartTitle>{getChartTitle()}</ChartTitle>
+            <TYPE.subHeader fontSize="12px">{getChartSubtitle()}</TYPE.subHeader>
           </LeftAlignContainer>
         </InfoContainer>
         <InfoSeparator />
@@ -440,7 +468,7 @@ export default function PoolPage({
       <ThemedBackground backgroundColor={backgroundColor} />
       {poolData ? (
         <AutoColumn gap="32px">
-          <RowBetween>
+          <BreadCrumbsContainer>
             <AutoRow gap="4px">
               <StyledInternalLink to={networkPrefix(activeNetwork)}>
                 <TYPE.main>{`Home > `}</TYPE.main>
@@ -453,7 +481,7 @@ export default function PoolPage({
                 poolData.feeTier
               )} `}</TYPE.label>
             </AutoRow>
-          </RowBetween>
+          </BreadCrumbsContainer>
           <PoolLayoutContainer>
             <ResponsiveRowCenter>
               <RowFixed align="center">
@@ -525,7 +553,7 @@ export default function PoolPage({
                     <ButtonPrimary>
                       <TYPE.label fontSize="14px">Trade</TYPE.label>
 
-                      <img src={ArrowRightIcon} height={20} width={20} alt="arrow" />
+                      <img src={ArrowRightIcon} height={15} width={15} alt="arrow" />
                     </ButtonPrimary>
                   </StyledExternalLink>
                 </RowFixed>

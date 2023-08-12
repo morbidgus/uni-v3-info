@@ -471,7 +471,6 @@ export default function Home() {
                   ? weeklyVolumeData
                   : formattedVolumeData
               }
-              color="yellow"
               setValue={setVolumeHover}
               setLabel={setRightLabel}
               value={volumeHover}

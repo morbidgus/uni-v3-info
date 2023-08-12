@@ -55,6 +55,7 @@ export function colors(darkMode: boolean): Colors {
     text3: darkMode ? '#6C7284' : '#888D9B',
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
+    textWithOpacity: 'rgba(255,255,255,0.5)',
 
     // backgrounds / greys
     bg0: darkMode ? '#191B1F' : '#F7F8FA',
@@ -150,12 +151,12 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 }
 
 const TextWrapper = styled(Text)<{ color: keyof Colors }>`
-  color: ${({ color, theme }) => theme.text1};
+  color: ${({ color, theme }) => (color ? color : theme.text1)};
 `
 
 export const TYPE = {
   main(props: TextProps) {
-    return <TextWrapper fontWeight={400} color={'text2'} {...props} />
+    return <TextWrapper fontWeight={400} {...props} />
   },
   link(props: TextProps) {
     return <TextWrapper fontWeight={400} color={'primary1'} {...props} />
