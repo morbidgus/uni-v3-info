@@ -19,6 +19,9 @@ import { DarkGreyCard } from 'components/Card'
 import { SUPPORTED_NETWORK_VERSIONS, EthereumNetworkInfo, OptimismNetworkInfo } from 'constants/networks'
 import Footer from 'components/Footer'
 import TransactionsPage from './Transactions/TransactionsPage'
+import GaugesOverview from './Gauges/GaugesOverview'
+import GaugePage from './Gauges/GaugesPage'
+import VeCHRAnalyticsPage from './VECHRAnalytics/VeCHRAnalyticsPage'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -174,9 +177,12 @@ export default function App() {
               <Switch>
                 <Route exact strict path="/:networkID?/pools/:address" component={PoolPage} />
                 <Route exact strict path="/:networkID?/pools" component={PoolsOverview} />
+                <Route exact strict path="/:networkID?/gauges" component={GaugesOverview} />
+                <Route exact strict path="/:networkID?/gauges/:address" component={GaugePage} />
                 <Route exact strict path="/:networkID?/tokens/:address" component={RedirectInvalidToken} />
                 <Route exact strict path="/:networkID?/tokens" component={TokensOverview} />
                 <Route exact strict path="/:networkID?/transactions" component={TransactionsPage} />
+                <Route exact strict path="/:networkID?/vechr-analytics" component={VeCHRAnalyticsPage} />
                 <Route exact path="/:networkID?" component={Home} />
               </Switch>
               <Marginer />
